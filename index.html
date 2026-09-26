@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PriceDrop</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background: #f7f7f8;
+  color: #171717;
+}
+
+header {
+  background: #111;
+  color: #fff;
+  padding: 18px 24px;
+}
+
+.logo {
+  font-size: 22px;
+  font-weight: 800;
+}
+
+.logo span {
+  color: #7c3aed;
+}
+
+.container {
+  max-width: 720px;
+  margin: auto;
+  padding: 45px 20px;
+}
+
+.hero {
+  text-align: center;
+  margin-bottom: 35px;
+}
+
+.hero h1 {
+  font-size: 38px;
+  margin: 0 0 12px;
+}
+
+.hero p {
+  color: #666;
+  font-size: 17px;
+  line-height: 1.5;
+}
+
+.card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 28px;
+  box-shadow: 0 5px 25px #0000000f;
+  margin-bottom: 20px;
+}
+
+label {
+  display: block;
+  font-weight: 700;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+input {
+  width: 100%;
+  padding: 14px;
+  border: 1px solid #d5d5d5;
+  border-radius: 9px;
+  font-size: 16px;
+  margin-bottom: 20px;
+}
+
+button.primary {
+  width: 100%;
+  background: #7c3aed;
+  color: #fff;
+  border: 0;
+  padding: 15px;
+  border-radius: 9px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+button.secondary {
+  background: #eee;
+  border: 0;
+  padding: 11px 15px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.loading {
+  text-align: center;
+  padding: 40px 10px;
+}
+
+.spinner {
+  width: 42px;
+  height: 42px;
+  border: 4px solid #eee;
+  border-top-color: #7c3aed;
+  border-radius: 50%;
+  animation: spin .8s linear infinite;
+  margin: auto auto 20px;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.product-image {
+  width: 100%;
+  max-height: 280px;
+  object-fit: contain;
+  border-radius: 12px;
+  background: #f7f7f7;
+  margin-bottom: 20px;
+}
+
+.product-name {
+  font-size: 24px;
+  font-weight: 800;
+  margin-bottom: 8px;
+}
+
+.retailer {
+  color: #666;
+  margin-bottom: 20px;
+}
+
+.price {
+  font-size: 34px;
+  font-weight: 800;
+  margin-bottom: 25px;
+}
+
+.target-box {
+  background: #f5f3ff;
+  border: 1px solid #ddd6fe;
+  padding: 18px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+
+.target-box input {
+  margin-bottom: 0;
+}
+
+.error {
+  background: #fff1f2;
+  border: 1px solid #fecdd3;
+  color: #9f1239;
+  padding: 13px;
+  border-radius: 9px;
+  margin-bottom: 18px;
+}
+
+.success {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  color: #166534;
+  padding: 18px;
+  border-radius: 9px;
+  line-height: 1.5;
+}
+
+@media (max-width: 600px) {
+  .hero h1 {
+    font-size: 31px;
+  }
+
+  .card {
+    padding: 21px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="logo">Price<span>Drop</span></div>
+</header>
+
+<main class="container">
+
+<section id="homeScreen">
+
+  <div class="hero">
+    <h1>Never miss a price drop.</h1>
+    <p>
+      Give us the exact product link and we'll find the current price for you.
+    </p>
+  </div>
+
+  <div class="card">
+    <div id="homeError" class="error hidden"></div>
+
+    <label>What are you looking for?</label>
+    <input
+      id="productName"
+      placeholder="e.g. Garmin Fenix 8"
+    >
+
+    <label>Product URL</label>
+    <input
+      id="productUrl"
+      type="url"
+      placeholder="https://www.example.com/product..."
+    >
+
+    <button class="primary" onclick="inspectProduct()">
+      Find Product
+    </button>
+  </div>
+
+</section>
+
+<section id="loadingScreen" class="hidden">
+
+  <div class="card loading">
+    <div class="spinner"></div>
+    <h2>Finding your product...</h2>
+    <p>
+      We're checking the product page for the current price and product details.
+    </p>
+  </div>
+
+</section>
+
+<section id="productScreen" class="hidden">
+
+  <div class="card">
+
+    <div id="productError" class="error hidden"></div>
+
+    <img
+      id="productImage"
+      class="product-image hidden"
+      alt="Product"
+    >
+
+    <div id="foundProductName" class="product-name"></div>
+
+    <div id="foundRetailer" class="retailer"></div>
+
+    <div id="foundPrice" class="price"></div>
+
+    <div class="target-box">
+      <label>Alert me when the price reaches</label>
+
+      <input
+        id="targetPrice"
+        type="number"
+        min="0"
+        step="0.01"
+        placeholder="Target price"
+      >
+    </div>
+
+    <div class="target-box">
+      <label>Email address</label>
+
+      <input
+        id="emailAddress"
+        type="email"
+        placeholder="you@example.com"
+        autocomplete="email"
+      >
+    </div>
+
+    <button class="primary" onclick="startTracking()">
+      Start Tracking
+    </button>
+
+    <br><br>
+
+    <button class="secondary" onclick="showHome()">
+      Start Again
+    </button>
+
+  </div>
+
+</section>
+
+<section id="trackingScreen" class="hidden">
+
+  <div class="card">
+
+    <div class="success">
+      <strong>You're tracking it.</strong>
+      <br><br>
+      PriceDrop has recorded your target price and email address for this session.
+    </div>
+
+    <div id="trackingSummary"></div>
+
+    <br>
+
+    <
