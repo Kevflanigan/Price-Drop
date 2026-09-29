@@ -1983,7 +1983,16 @@ function showHomeError(message){
    STARTUP
 ------------------------- */
 
+let dashboardLoadId = 0;
+let initialised = false;
+
 async function initialise(){
+
+  if(initialised){
+    return;
+  }
+
+  initialised = true;
 
   const {
     data
@@ -2005,6 +2014,10 @@ async function initialise(){
 
 supabaseClient.auth.onAuthStateChange(
   async (event,session) => {
+
+    if(event === "INITIAL_SESSION"){
+      return;
+    }
 
     if(session){
 
@@ -2028,7 +2041,6 @@ supabaseClient.auth.onAuthStateChange(
 );
 
 
-initialise();
 
 </script>
 
