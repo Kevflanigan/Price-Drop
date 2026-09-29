@@ -1,5 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -29,96 +28,329 @@ button.secondary{background:#eee;border:0;padding:11px 15px;border-radius:8px;cu
 .success{background:#f0fdf4;border:1px solid #bbf7d0;color:#166534;padding:18px;border-radius:9px;line-height:1.5}
 @media(max-width:600px){.hero h1{font-size:31px}.card{padding:21px}}
 </style>
-</head>
-<body>
-<header><div class="logo">Price<span>Drop</span></div></header>
-<main class="container">
-<section id="homeScreen">
-<div class="hero"><h1>Never miss a price drop.</h1><p>Give us the exact product link and we'll find the current price for you.</p></div>
-<div class="card">
-<div id="homeError" class="error hidden"></div>
-<label>What are you looking for?</label>
+</head><body><header>
+<div class="logo">Price<span>Drop</span></div>
+</header><main class="container"><section id="homeScreen">
+<div class="hero">
+<h1>Never miss a price drop.</h1>
+<p>Give us the exact product link and we'll find the current price for you.</p>
+</div><div class="card">
+<div id="homeError" class="error hidden"></div><label>What are you looking for?</label>
 <input id="productName" placeholder="e.g. Garmin Fenix 8">
+
 <label>Product URL</label>
 <input id="productUrl" type="url" placeholder="https://www.example.com/product...">
+
 <button class="primary" onclick="inspectProduct()">Find Product</button>
+
 </div>
-</section>
-<section id="loadingScreen" class="hidden"><div class="card loading"><div class="spinner"></div><h2>Finding your product...</h2><p>We're checking the product page for the current price and product details.</p></div></section>
-<section id="productScreen" class="hidden">
-<div class="card">
-<div id="productError" class="error hidden"></div>
-<img id="productImage" class="product-image hidden" alt="Product">
-<div id="foundProductName" class="product-name"></div>
-<div id="foundRetailer" class="retailer"></div>
-<div id="foundPrice" class="price"></div>
-<div class="target-box"><label>Alert me when the price reaches</label><input id="targetPrice" type="number" min="0" step="0.01" placeholder="Target price"></div>
-<div class="target-box"><label>Email address</label><input id="emailAddress" type="email" placeholder="you@example.com" autocomplete="email"></div>
-<button class="primary" onclick="startTracking()">Start Tracking</button>
-<br><br><button class="secondary" onclick="showHome()">Start Again</button>
+</section><section id="loadingScreen" class="hidden">
+<div class="card loading">
+<div class="spinner"></div>
+<h2>Finding your product...</h2>
+<p>We're checking the product page for the current price and product details.</p>
 </div>
-</section>
-<section id="trackingScreen" class="hidden">
-<div class="card">
-<div class="success"><strong>You're tracking it.</strong><br><br>PriceDrop has recorded your target price and email address for this session.</div>
-<div id="trackingSummary"></div>
-<br><button class="primary" onclick="showHome()">Track Another Product</button>
+</section><section id="productScreen" class="hidden">
+<div class="card"><div id="productError" class="error hidden"></div><img id="productImage" class="product-image hidden" alt="Product"><div id="foundProductName" class="product-name"></div><div id="foundRetailer" class="retailer"></div><div id="foundPrice" class="price"></div><div class="target-box">
+<label>Alert me when the price reaches</label>
+<input id="targetPrice" type="number" min="0" step="0.01" placeholder="Target price">
+</div><div class="target-box">
+<label>Email address</label>
+<input id="emailAddress" type="email" placeholder="you@example.com" autocomplete="email">
+</div><button class="primary" onclick="startTracking()">Start Tracking</button>
+
+<br><br>
+
+<button class="secondary" onclick="showHome()">Start Again</button>
+
 </div>
-</section>
-</main>
-<script>
-const API_BASE="https://price-drop.kev-flanigan.workers.dev";
+</section><section id="trackingScreen" class="hidden">
+<div class="card"><div class="success">
+<strong>You're tracking it.</strong>
+<br><br>
+PriceDrop has recorded your target price and email address for this session.
+</div><div id="trackingSummary"></div><br><button class="primary" onclick="showHome()">Track Another Product</button>
+
+</div>
+</section></main><script>
+
+const API_BASE="https://price-drop-api.kev-flanigan.workers.dev";
+
 let inspectedProduct=null;
 
-function hideAllScreens(){["homeScreen","loadingScreen","productScreen","trackingScreen"].forEach(id=>document.getElementById(id).classList.add("hidden"))}
-function showHome(){hideAllScreens();document.getElementById("homeScreen").classList.remove("hidden")}
+
+function hideAllScreens(){
+["homeScreen","loadingScreen","productScreen","trackingScreen"]
+.forEach(id=>document.getElementById(id).classList.add("hidden"));
+}
+
+
+function showHome(){
+hideAllScreens();
+document.getElementById("homeScreen").classList.remove("hidden");
+}
+
 
 async function inspectProduct(){
-const name=document.getElementById("productName").value.trim(),url=document.getElementById("productUrl").value.trim(),error=document.getElementById("homeError");
+
+const name=document.getElementById("productName").value.trim();
+const url=document.getElementById("productUrl").value.trim();
+const error=document.getElementById("homeError");
+
 error.classList.add("hidden");
-if(!name)return showHomeError("Please enter the product you are looking for.");
-if(!url||!isValidUrl(url))return showHomeError("Please enter a valid product URL.");
-hideAllScreens();document.getElementById("loadingScreen").classList.remove("hidden");
+
+if(!name){
+return showHomeError("Please enter the product you are looking for.");
+}
+
+if(!url||!isValidUrl(url)){
+return showHomeError("Please enter a valid product URL.");
+}
+
+hideAllScreens();
+
+document.getElementById("loadingScreen").classList.remove("hidden");
+
 try{
-const response=await fetch(API_BASE+"/api/product/inspect",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({productName:name,url:url})});
+
+const response=await fetch(
+API_BASE+"/api/product/inspect",
+{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+productName:name,
+url:url
+})
+}
+);
+
 const product=await response.json();
-if(!response.ok)throw new Error(product.error||"Unable to inspect product.");
-if(typeof product.price!=="number")throw new Error("The product page did not return a valid price.");
-inspectedProduct=product;displayProduct(product);
+
+if(!response.ok){
+throw new Error(product.error||"Unable to inspect product.");
+}
+
+if(typeof product.price!=="number"){
+throw new Error("The product page did not return a valid price.");
+}
+
+inspectedProduct=product;
+
+displayProduct(product);
+
 }catch(err){
-hideAllScreens();document.getElementById("homeScreen").classList.remove("hidden");
-showHomeError(err.message||"We couldn't retrieve the live product details.");
+
+hideAllScreens();
+
+document.getElementById("homeScreen").classList.remove("hidden");
+
+showHomeError(
+err.message||"We couldn't retrieve the live product details."
+);
+
 }
+
 }
+
 
 function displayProduct(product){
-hideAllScreens();document.getElementById("productScreen").classList.remove("hidden");
-document.getElementById("foundProductName").textContent=product.productName||"Unknown product";
-document.getElementById("foundRetailer").textContent=product.retailer||"Unknown retailer";
-document.getElementById("foundPrice").textContent=formatPrice(product.price,product.currency);
+
+hideAllScreens();
+
+document.getElementById("productScreen").classList.remove("hidden");
+
+document.getElementById("foundProductName").textContent=
+product.productName||"Unknown product";
+
+document.getElementById("foundRetailer").textContent=
+product.retailer||"Unknown retailer";
+
+document.getElementById("foundPrice").textContent=
+formatPrice(product.price,product.currency);
+
 const image=document.getElementById("productImage");
-if(product.image){image.src=product.image;image.classList.remove("hidden")}else image.classList.add("hidden");
-document.getElementById("targetPrice").value=(Math.round(product.price*0.85*100)/100).toFixed(2);
-document.getElementById("emailAddress").value="";
+
+if(product.image){
+
+image.src=product.image;
+image.classList.remove("hidden");
+
+}else{
+
+image.classList.add("hidden");
+
 }
+
+const suggestedTarget=product.price*0.85;
+
+document.getElementById("targetPrice").value=
+suggestedTarget.toFixed(2);
+
+document.getElementById("emailAddress").value="";
+
+}
+
 
 function startTracking(){
-const target=parseFloat(document.getElementById("targetPrice").value),email=document.getElementById("emailAddress").value.trim(),error=document.getElementById("productError");
+
+const target=parseFloat(
+document.getElementById("targetPrice").value
+);
+
+const email=document.getElementById("emailAddress").value.trim();
+
+const error=document.getElementById("productError");
+
 error.classList.add("hidden");
-if(!inspectedProduct){error.textContent="Product information is missing.";return error.classList.remove("hidden")}
-if(!target||target<=0){error.textContent="Please enter a valid target price.";return error.classList.remove("hidden")}
-if(target>=inspectedProduct.price){error.textContent="Your target price should be below the current price.";return error.classList.remove("hidden")}
-if(!email||!isValidEmail(email)){error.textContent="Please enter a valid email address.";return error.classList.remove("hidden")}
-document.getElementById("trackingSummary").innerHTML=`<p><strong>${escapeHtml(inspectedProduct.productName)}</strong></p><p>${escapeHtml(inspectedProduct.retailer||"")}</p><p>Current price: <strong>${formatPrice(inspectedProduct.price,inspectedProduct.currency)}</strong></p><p>Target price: <strong>${formatPrice(target,inspectedProduct.currency)}</strong></p><p>Email: <strong>${escapeHtml(email)}</strong></p>`;
-hideAllScreens();document.getElementById("trackingScreen").classList.remove("hidden");
+
+if(!inspectedProduct){
+
+error.textContent="Product information is missing.";
+error.classList.remove("hidden");
+return;
+
 }
 
-function formatPrice(price,currency="GBP"){try{return new Intl.NumberFormat("en-GB",{style:"currency",currency:currency||"GBP"}).format(price)}catch{return "£"+Number(price).toFixed(2)}}
-function isValidUrl(value){try{const url=new URL(value);return url.protocol==="http:"||url.protocol==="https:"}catch{return false}}
-function isValidEmail(value){return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)}
-function showHomeError(message){const error=document.getElementById("homeError");error.textContent=message;error.classList.remove("hidden")}
-function escapeHtml(value){return String(value).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;")}
+if(!target||target<=0){
+
+error.textContent="Please enter a valid target price.";
+error.classList.remove("hidden");
+return;
+
+}
+
+if(target>=inspectedProduct.price){
+
+error.textContent=
+"Your target price should be below the current price.";
+
+error.classList.remove("hidden");
+return;
+
+}
+
+if(!email||!isValidEmail(email)){
+
+error.textContent="Please enter a valid email address.";
+
+error.classList.remove("hidden");
+return;
+
+}
+
+document.getElementById("trackingSummary").innerHTML=`
+
+<p>
+<strong>${escapeHtml(inspectedProduct.productName)}</strong>
+</p>
+
+<p>
+${escapeHtml(inspectedProduct.retailer||"")}
+</p>
+
+<p>
+Current price:
+<strong>
+${formatPrice(inspectedProduct.price,inspectedProduct.currency)}
+</strong>
+</p>
+
+<p>
+Target price:
+<strong>
+${formatPrice(target,inspectedProduct.currency)}
+</strong>
+</p>
+
+<p>
+Email:
+<strong>
+${escapeHtml(email)}
+</strong>
+</p>
+
+`;
+
+hideAllScreens();
+
+document.getElementById("trackingScreen").classList.remove("hidden");
+
+}
+
+
+function formatPrice(price,currency="GBP"){
+
+try{
+
+return new Intl.NumberFormat(
+"en-GB",
+{
+style:"currency",
+currency:currency||"GBP"
+}
+).format(price);
+
+}catch{
+
+return "£"+Number(price).toFixed(2);
+
+}
+
+}
+
+
+function isValidUrl(value){
+
+try{
+
+const url=new URL(value);
+
+return url.protocol==="http:"||
+url.protocol==="https:";
+
+}catch{
+
+return false;
+
+}
+
+}
+
+
+function isValidEmail(value){
+
+return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+
+}
+
+
+function showHomeError(message){
+
+const error=document.getElementById("homeError");
+
+error.textContent=message;
+
+error.classList.remove("hidden");
+
+}
+
+
+function escapeHtml(value){
+
+return String(value)
+.replace(/&/g,"&amp;")
+.replace(/</g,"&lt;")
+.replace(/>/g,"&gt;")
+.replace(/"/g,"&quot;")
+.replace(/'/g,"&#039;");
+
+}
+
+
 showHome();
-</script>
-</body>
+
+</script></body>
 </html>
