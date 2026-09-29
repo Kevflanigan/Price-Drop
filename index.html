@@ -9,218 +9,37 @@
 
 <style>
 *{box-sizing:border-box}
-
-body{
-margin:0;
-font-family:Arial,Helvetica,sans-serif;
-background:#f7f7f8;
-color:#171717
-}
-
-header{
-background:#111;
-color:#fff;
-padding:18px 24px;
-display:flex;
-justify-content:space-between;
-align-items:center
-}
-
-.logo{
-font-size:22px;
-font-weight:800
-}
-
-.logo span{
-color:#7c3aed
-}
-
-.logout{
-background:#333;
-color:#fff;
-border:0;
-padding:8px 13px;
-border-radius:7px;
-cursor:pointer
-}
-
-.container{
-max-width:720px;
-margin:auto;
-padding:45px 20px
-}
-
-.hero{
-text-align:center;
-margin-bottom:35px
-}
-
-.hero h1{
-font-size:38px;
-margin:0 0 12px
-}
-
-.hero p{
-color:#666;
-font-size:17px;
-line-height:1.5
-}
-
-.card{
-background:#fff;
-border-radius:16px;
-padding:28px;
-box-shadow:0 5px 25px #0000000f;
-margin-bottom:20px
-}
-
-label{
-display:block;
-font-weight:700;
-margin-bottom:8px;
-font-size:14px
-}
-
-input{
-width:100%;
-padding:14px;
-border:1px solid #d5d5d5;
-border-radius:9px;
-font-size:16px;
-margin-bottom:20px
-}
-
-button.primary{
-width:100%;
-background:#7c3aed;
-color:#fff;
-border:0;
-padding:15px;
-border-radius:9px;
-font-size:16px;
-font-weight:700;
-cursor:pointer
-}
-
-button.primary:hover{
-background:#6d28d9
-}
-
-button.secondary{
-background:#eee;
-border:0;
-padding:11px 15px;
-border-radius:8px;
-cursor:pointer
-}
-
-.link-button{
-background:none;
-border:0;
-color:#7c3aed;
-cursor:pointer;
-padding:0;
-font-size:14px
-}
-
-.hidden{
-display:none!important
-}
-
-.loading{
-text-align:center;
-padding:40px 10px
-}
-
-.spinner{
-width:42px;
-height:42px;
-border:4px solid #eee;
-border-top-color:#7c3aed;
-border-radius:50%;
-animation:spin .8s linear infinite;
-margin:auto auto 20px
-}
-
-@keyframes spin{
-to{transform:rotate(360deg)}
-}
-
-.product-image{
-width:100%;
-max-height:280px;
-object-fit:contain;
-border-radius:12px;
-background:#f7f7f7;
-margin-bottom:20px
-}
-
-.product-name{
-font-size:24px;
-font-weight:800;
-margin-bottom:8px
-}
-
-.retailer{
-color:#666;
-margin-bottom:20px
-}
-
-.price{
-font-size:34px;
-font-weight:800;
-margin-bottom:25px
-}
-
-.target-box{
-background:#f5f3ff;
-border:1px solid #ddd6fe;
-padding:18px;
-border-radius:10px;
-margin-bottom:20px
-}
-
-.target-box input{
-margin-bottom:0
-}
-
-.error{
-background:#fff1f2;
-border:1px solid #fecdd3;
-color:#9f1239;
-padding:13px;
-border-radius:9px;
-margin-bottom:18px
-}
-
-.success{
-background:#f0fdf4;
-border:1px solid #bbf7d0;
-color:#166534;
-padding:18px;
-border-radius:9px;
-line-height:1.5
-}
-
-.auth-switch{
-text-align:center;
-margin-top:20px;
-color:#666;
-font-size:14px
-}
-
-.auth-note{
-text-align:center;
-color:#666;
-font-size:13px;
-line-height:1.5;
-margin-top:18px
-}
-
-@media(max-width:600px){
-.hero h1{font-size:31px}
-.card{padding:21px}
-}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f7f7f8;color:#171717}
+header{background:#111;color:#fff;padding:18px 24px;display:flex;justify-content:space-between;align-items:center}
+.logo{font-size:22px;font-weight:800}.logo span{color:#7c3aed}
+.logout{background:#333;color:#fff;border:0;padding:8px 13px;border-radius:7px;cursor:pointer}
+.container{max-width:720px;margin:auto;padding:45px 20px}
+.hero{text-align:center;margin-bottom:35px}
+.hero h1{font-size:38px;margin:0 0 12px}
+.hero p{color:#666;font-size:17px;line-height:1.5}
+.card{background:#fff;border-radius:16px;padding:28px;box-shadow:0 5px 25px #0000000f;margin-bottom:20px}
+label{display:block;font-weight:700;margin-bottom:8px;font-size:14px}
+input{width:100%;padding:14px;border:1px solid #d5d5d5;border-radius:9px;font-size:16px;margin-bottom:20px}
+button.primary{width:100%;background:#7c3aed;color:#fff;border:0;padding:15px;border-radius:9px;font-size:16px;font-weight:700;cursor:pointer}
+button.primary:hover{background:#6d28d9}
+button.secondary{background:#eee;border:0;padding:11px 15px;border-radius:8px;cursor:pointer}
+.link-button{background:none;border:0;color:#7c3aed;cursor:pointer;padding:0;font-size:14px}
+.hidden{display:none!important}
+.loading{text-align:center;padding:40px 10px}
+.spinner{width:42px;height:42px;border:4px solid #eee;border-top-color:#7c3aed;border-radius:50%;animation:spin .8s linear infinite;margin:auto auto 20px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.product-image{width:100%;max-height:280px;object-fit:contain;border-radius:12px;background:#f7f7f7;margin-bottom:20px}
+.product-name{font-size:24px;font-weight:800;margin-bottom:8px}
+.retailer{color:#666;margin-bottom:20px}
+.price{font-size:34px;font-weight:800;margin-bottom:25px}
+.target-box{background:#f5f3ff;border:1px solid #ddd6fe;padding:18px;border-radius:10px;margin-bottom:20px}
+.target-box input{margin-bottom:0}
+.error{background:#fff1f2;border:1px solid #fecdd3;color:#9f1239;padding:13px;border-radius:9px;margin-bottom:18px}
+.success{background:#f0fdf4;border:1px solid #bbf7d0;color:#166534;padding:18px;border-radius:9px;line-height:1.5}
+.auth-switch{text-align:center;margin-top:20px;color:#666;font-size:14px}
+.auth-note{text-align:center;color:#666;font-size:13px;line-height:1.5;margin-top:18px}
+.account-info{text-align:center;color:#666;font-size:14px;margin-bottom:20px}
+@media(max-width:600px){.hero h1{font-size:31px}.card{padding:21px}}
 </style>
 </head>
 
@@ -246,40 +65,23 @@ margin-top:18px
 <div id="loginError" class="error hidden"></div>
 
 <label>Email address</label>
-<input
-id="loginEmail"
-type="email"
-placeholder="you@example.com"
-autocomplete="email"
->
+<input id="loginEmail" type="email" placeholder="you@example.com" autocomplete="email">
 
 <label>Password</label>
-<input
-id="loginPassword"
-type="password"
-placeholder="Password"
-autocomplete="current-password"
->
+<input id="loginPassword" type="password" placeholder="Password" autocomplete="current-password">
 
-<button class="primary" onclick="login()">
-Log in
-</button>
+<button class="primary" onclick="login()">Log in</button>
 
 <div class="auth-switch">
 Don't have an account?
-<button class="link-button" onclick="showSignup()">
-Create one
-</button>
+<button class="link-button" onclick="showSignup()">Create one</button>
 </div>
 
 <div class="auth-note">
-<button class="link-button" onclick="showForgotPassword()">
-Forgot your password?
-</button>
+<button class="link-button" onclick="showForgotPassword()">Forgot your password?</button>
 </div>
 
 </div>
-
 </section>
 
 
@@ -296,34 +98,19 @@ Forgot your password?
 <div id="signupError" class="error hidden"></div>
 
 <label>Email address</label>
-<input
-id="signupEmail"
-type="email"
-placeholder="you@example.com"
-autocomplete="email"
->
+<input id="signupEmail" type="email" placeholder="you@example.com" autocomplete="email">
 
 <label>Password</label>
-<input
-id="signupPassword"
-type="password"
-placeholder="Choose a password"
-autocomplete="new-password"
->
+<input id="signupPassword" type="password" placeholder="Choose a password" autocomplete="new-password">
 
-<button class="primary" onclick="signup()">
-Create account
-</button>
+<button class="primary" onclick="signup()">Create account</button>
 
 <div class="auth-switch">
 Already have an account?
-<button class="link-button" onclick="showLogin()">
-Log in
-</button>
+<button class="link-button" onclick="showLogin()">Log in</button>
 </div>
 
 </div>
-
 </section>
 
 
@@ -341,25 +128,15 @@ Log in
 <div id="forgotSuccess" class="success hidden"></div>
 
 <label>Email address</label>
-<input
-id="forgotEmail"
-type="email"
-placeholder="you@example.com"
-autocomplete="email"
->
+<input id="forgotEmail" type="email" placeholder="you@example.com" autocomplete="email">
 
-<button class="primary" onclick="sendPasswordReset()">
-Send reset link
-</button>
+<button class="primary" onclick="sendPasswordReset()">Send reset link</button>
 
 <div class="auth-switch">
-<button class="link-button" onclick="showLogin()">
-Back to login
-</button>
+<button class="link-button" onclick="showLogin()">Back to login</button>
 </div>
 
 </div>
-
 </section>
 
 
@@ -373,27 +150,19 @@ Back to login
 
 <div class="card">
 
+<div class="account-info" id="accountInfo"></div>
+
 <div id="homeError" class="error hidden"></div>
 
 <label>What are you looking for?</label>
-<input
-id="productName"
-placeholder="e.g. Garmin Fenix 8"
->
+<input id="productName" placeholder="e.g. Garmin Fenix 8">
 
 <label>Product URL</label>
-<input
-id="productUrl"
-type="url"
-placeholder="https://www.example.com/product..."
->
+<input id="productUrl" type="url" placeholder="https://www.example.com/product...">
 
-<button class="primary" onclick="inspectProduct()">
-Find Product
-</button>
+<button class="primary" onclick="inspectProduct()">Find Product</button>
 
 </div>
-
 </section>
 
 
@@ -406,12 +175,9 @@ Find Product
 
 <h2>Finding your product...</h2>
 
-<p>
-We're checking the product page for the current price and product details.
-</p>
+<p>We're checking the product page for the current price and product details.</p>
 
 </div>
-
 </section>
 
 
@@ -422,11 +188,7 @@ We're checking the product page for the current price and product details.
 
 <div id="productError" class="error hidden"></div>
 
-<img
-id="productImage"
-class="product-image hidden"
-alt="Product"
->
+<img id="productImage" class="product-image hidden" alt="Product">
 
 <div id="foundProductName" class="product-name"></div>
 
@@ -436,32 +198,21 @@ alt="Product"
 
 <div class="target-box">
 
-<label>
-Alert me when the price reaches
-</label>
+<label>Alert me when the price reaches</label>
 
-<input
-id="targetPrice"
-type="number"
-min="0"
-step="0.01"
-placeholder="Target price"
->
+<input id="targetPrice" type="number" min="0" step="0.01" placeholder="Target price">
 
 </div>
 
-<button class="primary" onclick="startTracking()">
+<button id="startTrackingButton" class="primary" onclick="startTracking()">
 Start Tracking
 </button>
 
 <br><br>
 
-<button class="secondary" onclick="showHome()">
-Start Again
-</button>
+<button class="secondary" onclick="showHome()">Start Again</button>
 
 </div>
-
 </section>
 
 
@@ -476,7 +227,7 @@ Start Again
 
 <br><br>
 
-PriceDrop has recorded your target price for this session.
+PriceDrop has saved this product to your account.
 
 </div>
 
@@ -484,12 +235,9 @@ PriceDrop has recorded your target price for this session.
 
 <br>
 
-<button class="primary" onclick="showHome()">
-Track Another Product
-</button>
+<button class="primary" onclick="showHome()">Track Another Product</button>
 
 </div>
-
 </section>
 
 </main>
@@ -531,8 +279,7 @@ function hideAllScreens(){
 "trackingScreen"
 ].forEach(id => {
 
-const element =
-document.getElementById(id);
+const element = document.getElementById(id);
 
 if(element){
 element.classList.add("hidden");
@@ -547,9 +294,7 @@ function showLogin(){
 
 hideAllScreens();
 
-document
-.getElementById("loginScreen")
-.classList.remove("hidden");
+document.getElementById("loginScreen").classList.remove("hidden");
 
 }
 
@@ -558,9 +303,7 @@ function showSignup(){
 
 hideAllScreens();
 
-document
-.getElementById("signupScreen")
-.classList.remove("hidden");
+document.getElementById("signupScreen").classList.remove("hidden");
 
 }
 
@@ -569,9 +312,7 @@ function showForgotPassword(){
 
 hideAllScreens();
 
-document
-.getElementById("forgotScreen")
-.classList.remove("hidden");
+document.getElementById("forgotScreen").classList.remove("hidden");
 
 }
 
@@ -580,18 +321,25 @@ function showHome(){
 
 hideAllScreens();
 
-document
-.getElementById("homeScreen")
-.classList.remove("hidden");
+document.getElementById("homeScreen").classList.remove("hidden");
 
 }
 
 
-function showLoggedInUI(){
+async function showLoggedInUI(){
 
-document
-.getElementById("logoutButton")
-.classList.remove("hidden");
+document.getElementById("logoutButton").classList.remove("hidden");
+
+const {
+data
+} = await supabaseClient.auth.getUser();
+
+if(data.user){
+
+document.getElementById("accountInfo").textContent =
+"Signed in as " + data.user.email;
+
+}
 
 showHome();
 
@@ -605,19 +353,13 @@ showHome();
 async function login(){
 
 const email =
-document
-.getElementById("loginEmail")
-.value
-.trim();
+document.getElementById("loginEmail").value.trim();
 
 const password =
-document
-.getElementById("loginPassword")
-.value;
+document.getElementById("loginPassword").value;
 
 const error =
-document
-.getElementById("loginError");
+document.getElementById("loginError");
 
 error.classList.add("hidden");
 
@@ -643,8 +385,7 @@ password
 
 if(authError){
 
-error.textContent =
-authError.message;
+error.textContent = authError.message;
 
 error.classList.remove("hidden");
 
@@ -664,19 +405,13 @@ showLoggedInUI();
 async function signup(){
 
 const email =
-document
-.getElementById("signupEmail")
-.value
-.trim();
+document.getElementById("signupEmail").value.trim();
 
 const password =
-document
-.getElementById("signupPassword")
-.value;
+document.getElementById("signupPassword").value;
 
 const error =
-document
-.getElementById("signupError");
+document.getElementById("signupError");
 
 error.classList.add("hidden");
 
@@ -713,8 +448,7 @@ password
 
 if(authError){
 
-error.textContent =
-authError.message;
+error.textContent = authError.message;
 
 error.classList.remove("hidden");
 
@@ -748,9 +482,7 @@ await supabaseClient.auth.signOut();
 
 inspectedProduct = null;
 
-document
-.getElementById("logoutButton")
-.classList.add("hidden");
+document.getElementById("logoutButton").classList.add("hidden");
 
 showLogin();
 
@@ -760,18 +492,13 @@ showLogin();
 async function sendPasswordReset(){
 
 const email =
-document
-.getElementById("forgotEmail")
-.value
-.trim();
+document.getElementById("forgotEmail").value.trim();
 
 const error =
-document
-.getElementById("forgotError");
+document.getElementById("forgotError");
 
 const success =
-document
-.getElementById("forgotSuccess");
+document.getElementById("forgotSuccess");
 
 error.classList.add("hidden");
 success.classList.add("hidden");
@@ -800,8 +527,7 @@ redirectTo:
 
 if(resetError){
 
-error.textContent =
-resetError.message;
+error.textContent = resetError.message;
 
 error.classList.remove("hidden");
 
@@ -824,20 +550,13 @@ success.classList.remove("hidden");
 async function inspectProduct(){
 
 const name =
-document
-.getElementById("productName")
-.value
-.trim();
+document.getElementById("productName").value.trim();
 
 const url =
-document
-.getElementById("productUrl")
-.value
-.trim();
+document.getElementById("productUrl").value.trim();
 
 const error =
-document
-.getElementById("homeError");
+document.getElementById("homeError");
 
 error.classList.add("hidden");
 
@@ -859,9 +578,7 @@ return showHomeError(
 
 hideAllScreens();
 
-document
-.getElementById("loadingScreen")
-.classList.remove("hidden");
+document.getElementById("loadingScreen").classList.remove("hidden");
 
 try{
 
@@ -903,8 +620,7 @@ throw new Error(
 
 }
 
-inspectedProduct =
-product;
+inspectedProduct = product;
 
 displayProduct(product);
 
@@ -912,9 +628,7 @@ displayProduct(product);
 
 hideAllScreens();
 
-document
-.getElementById("homeScreen")
-.classList.remove("hidden");
+document.getElementById("homeScreen").classList.remove("hidden");
 
 showHomeError(
 err.message ||
@@ -930,37 +644,23 @@ function displayProduct(product){
 
 hideAllScreens();
 
-document
-.getElementById("productScreen")
-.classList.remove("hidden");
+document.getElementById("productScreen").classList.remove("hidden");
 
-document
-.getElementById("foundProductName")
-.textContent =
-product.productName ||
-"Unknown product";
+document.getElementById("foundProductName").textContent =
+product.productName || "Unknown product";
 
-document
-.getElementById("foundRetailer")
-.textContent =
-product.retailer ||
-"Unknown retailer";
+document.getElementById("foundRetailer").textContent =
+product.retailer || "Unknown retailer";
 
-document
-.getElementById("foundPrice")
-.textContent =
-formatPrice(
-product.price,
-product.currency
-);
+document.getElementById("foundPrice").textContent =
+formatPrice(product.price,product.currency);
 
 const image =
 document.getElementById("productImage");
 
 if(product.image){
 
-image.src =
-product.image;
+image.src = product.image;
 
 image.classList.remove("hidden");
 
@@ -973,26 +673,28 @@ image.classList.add("hidden");
 const suggestedTarget =
 product.price * 0.85;
 
-document
-.getElementById("targetPrice")
-.value =
+document.getElementById("targetPrice").value =
 suggestedTarget.toFixed(2);
 
 }
 
 
-function startTracking(){
+/* -------------------------
+   SAVE TRACKING
+------------------------- */
+
+async function startTracking(){
 
 const target =
 parseFloat(
-document
-.getElementById("targetPrice")
-.value
+document.getElementById("targetPrice").value
 );
 
 const error =
-document
-.getElementById("productError");
+document.getElementById("productError");
+
+const button =
+document.getElementById("startTrackingButton");
 
 error.classList.add("hidden");
 
@@ -1029,9 +731,59 @@ return;
 
 }
 
-document
-.getElementById("trackingSummary")
-.innerHTML = `
+const {
+data: userData,
+error: userError
+} =
+await supabaseClient.auth.getUser();
+
+if(userError || !userData.user){
+
+error.textContent =
+"Your session has expired. Please log in again.";
+
+error.classList.remove("hidden");
+
+return;
+
+}
+
+button.disabled = true;
+button.textContent = "Saving...";
+
+const {
+error: saveError
+} =
+await supabaseClient
+.from("tracked_products")
+.insert({
+user_id: userData.user.id,
+product_name: inspectedProduct.productName,
+product_url: inspectedProduct.url,
+retailer: inspectedProduct.retailer || null,
+current_price: inspectedProduct.price,
+target_price: target,
+currency: inspectedProduct.currency || "GBP",
+status: "active"
+});
+
+button.disabled = false;
+button.textContent = "Start Tracking";
+
+if(saveError){
+
+console.error(saveError);
+
+error.textContent =
+"Unable to save this product. Please try again.";
+
+error.classList.remove("hidden");
+
+return;
+
+}
+
+document.getElementById("trackingSummary").innerHTML = `
 
 <p>
 <strong>
@@ -1067,9 +819,7 @@ inspectedProduct.currency
 
 hideAllScreens();
 
-document
-.getElementById("trackingScreen")
-.classList.remove("hidden");
+document.getElementById("trackingScreen").classList.remove("hidden");
 
 }
 
@@ -1092,8 +842,7 @@ currency:currency || "GBP"
 
 }catch{
 
-return "£" +
-Number(price).toFixed(2);
+return "£" + Number(price).toFixed(2);
 
 }
 
@@ -1104,8 +853,7 @@ function isValidUrl(value){
 
 try{
 
-const url =
-new URL(value);
+const url = new URL(value);
 
 return (
 url.protocol === "http:" ||
@@ -1124,11 +872,9 @@ return false;
 function showHomeError(message){
 
 const error =
-document
-.getElementById("homeError");
+document.getElementById("homeError");
 
-error.textContent =
-message;
+error.textContent = message;
 
 error.classList.remove("hidden");
 
@@ -1197,4 +943,3 @@ initialise();
 
 </body>
 </html>
-
