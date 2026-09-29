@@ -1,143 +1,910 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PriceDrop</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <style>
 *{box-sizing:border-box}
-body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f7f7f8;color:#171717}
-header{background:#111;color:#fff;padding:18px 24px}
-.logo{font-size:22px;font-weight:800}.logo span{color:#7c3aed}
-.container{max-width:720px;margin:auto;padding:45px 20px}
-.hero{text-align:center;margin-bottom:35px}.hero h1{font-size:38px;margin:0 0 12px}
-.hero p{color:#666;font-size:17px;line-height:1.5}
-.card{background:#fff;border-radius:16px;padding:28px;box-shadow:0 5px 25px #0000000f;margin-bottom:20px}
-label{display:block;font-weight:700;margin-bottom:8px;font-size:14px}
-input{width:100%;padding:14px;border:1px solid #d5d5d5;border-radius:9px;font-size:16px;margin-bottom:20px}
-button.primary{width:100%;background:#7c3aed;color:#fff;border:0;padding:15px;border-radius:9px;font-size:16px;font-weight:700;cursor:pointer}
-button.secondary{background:#eee;border:0;padding:11px 15px;border-radius:8px;cursor:pointer}
-.hidden{display:none!important}.loading{text-align:center;padding:40px 10px}
-.spinner{width:42px;height:42px;border:4px solid #eee;border-top-color:#7c3aed;border-radius:50%;animation:spin .8s linear infinite;margin:auto auto 20px}
-@keyframes spin{to{transform:rotate(360deg)}}
-.product-image{width:100%;max-height:280px;object-fit:contain;border-radius:12px;background:#f7f7f7;margin-bottom:20px}
-.product-name{font-size:24px;font-weight:800;margin-bottom:8px}.retailer{color:#666;margin-bottom:20px}
-.price{font-size:34px;font-weight:800;margin-bottom:25px}
-.target-box{background:#f5f3ff;border:1px solid #ddd6fe;padding:18px;border-radius:10px;margin-bottom:20px}
-.target-box input{margin-bottom:0}
-.error{background:#fff1f2;border:1px solid #fecdd3;color:#9f1239;padding:13px;border-radius:9px;margin-bottom:18px}
-.success{background:#f0fdf4;border:1px solid #bbf7d0;color:#166534;padding:18px;border-radius:9px;line-height:1.5}
-@media(max-width:600px){.hero h1{font-size:31px}.card{padding:21px}}
+
+body{
+margin:0;
+font-family:Arial,Helvetica,sans-serif;
+background:#f7f7f8;
+color:#171717
+}
+
+header{
+background:#111;
+color:#fff;
+padding:18px 24px;
+display:flex;
+justify-content:space-between;
+align-items:center
+}
+
+.logo{
+font-size:22px;
+font-weight:800
+}
+
+.logo span{
+color:#7c3aed
+}
+
+.logout{
+background:#333;
+color:#fff;
+border:0;
+padding:8px 13px;
+border-radius:7px;
+cursor:pointer
+}
+
+.container{
+max-width:720px;
+margin:auto;
+padding:45px 20px
+}
+
+.hero{
+text-align:center;
+margin-bottom:35px
+}
+
+.hero h1{
+font-size:38px;
+margin:0 0 12px
+}
+
+.hero p{
+color:#666;
+font-size:17px;
+line-height:1.5
+}
+
+.card{
+background:#fff;
+border-radius:16px;
+padding:28px;
+box-shadow:0 5px 25px #0000000f;
+margin-bottom:20px
+}
+
+label{
+display:block;
+font-weight:700;
+margin-bottom:8px;
+font-size:14px
+}
+
+input{
+width:100%;
+padding:14px;
+border:1px solid #d5d5d5;
+border-radius:9px;
+font-size:16px;
+margin-bottom:20px
+}
+
+button.primary{
+width:100%;
+background:#7c3aed;
+color:#fff;
+border:0;
+padding:15px;
+border-radius:9px;
+font-size:16px;
+font-weight:700;
+cursor:pointer
+}
+
+button.primary:hover{
+background:#6d28d9
+}
+
+button.secondary{
+background:#eee;
+border:0;
+padding:11px 15px;
+border-radius:8px;
+cursor:pointer
+}
+
+.link-button{
+background:none;
+border:0;
+color:#7c3aed;
+cursor:pointer;
+padding:0;
+font-size:14px
+}
+
+.hidden{
+display:none!important
+}
+
+.loading{
+text-align:center;
+padding:40px 10px
+}
+
+.spinner{
+width:42px;
+height:42px;
+border:4px solid #eee;
+border-top-color:#7c3aed;
+border-radius:50%;
+animation:spin .8s linear infinite;
+margin:auto auto 20px
+}
+
+@keyframes spin{
+to{transform:rotate(360deg)}
+}
+
+.product-image{
+width:100%;
+max-height:280px;
+object-fit:contain;
+border-radius:12px;
+background:#f7f7f7;
+margin-bottom:20px
+}
+
+.product-name{
+font-size:24px;
+font-weight:800;
+margin-bottom:8px
+}
+
+.retailer{
+color:#666;
+margin-bottom:20px
+}
+
+.price{
+font-size:34px;
+font-weight:800;
+margin-bottom:25px
+}
+
+.target-box{
+background:#f5f3ff;
+border:1px solid #ddd6fe;
+padding:18px;
+border-radius:10px;
+margin-bottom:20px
+}
+
+.target-box input{
+margin-bottom:0
+}
+
+.error{
+background:#fff1f2;
+border:1px solid #fecdd3;
+color:#9f1239;
+padding:13px;
+border-radius:9px;
+margin-bottom:18px
+}
+
+.success{
+background:#f0fdf4;
+border:1px solid #bbf7d0;
+color:#166534;
+padding:18px;
+border-radius:9px;
+line-height:1.5
+}
+
+.auth-switch{
+text-align:center;
+margin-top:20px;
+color:#666;
+font-size:14px
+}
+
+.auth-note{
+text-align:center;
+color:#666;
+font-size:13px;
+line-height:1.5;
+margin-top:18px
+}
+
+@media(max-width:600px){
+.hero h1{font-size:31px}
+.card{padding:21px}
+}
 </style>
-</head><body><header>
+</head>
+
+<body>
+
+<header>
 <div class="logo">Price<span>Drop</span></div>
-</header><main class="container"><section id="homeScreen">
+<button id="logoutButton" class="logout hidden" onclick="logout()">Log out</button>
+</header>
+
+<main class="container">
+
+<!-- LOGIN -->
+<section id="loginScreen">
+
+<div class="hero">
+<h1>Never miss a price drop.</h1>
+<p>Sign in to track products and get notified when prices fall.</p>
+</div>
+
+<div class="card">
+
+<div id="loginError" class="error hidden"></div>
+
+<label>Email address</label>
+<input
+id="loginEmail"
+type="email"
+placeholder="you@example.com"
+autocomplete="email"
+>
+
+<label>Password</label>
+<input
+id="loginPassword"
+type="password"
+placeholder="Password"
+autocomplete="current-password"
+>
+
+<button class="primary" onclick="login()">
+Log in
+</button>
+
+<div class="auth-switch">
+Don't have an account?
+<button class="link-button" onclick="showSignup()">
+Create one
+</button>
+</div>
+
+<div class="auth-note">
+<button class="link-button" onclick="showForgotPassword()">
+Forgot your password?
+</button>
+</div>
+
+</div>
+
+</section>
+
+
+<!-- SIGN UP -->
+<section id="signupScreen" class="hidden">
+
+<div class="hero">
+<h1>Create your account.</h1>
+<p>Set up your PriceDrop account to start tracking products.</p>
+</div>
+
+<div class="card">
+
+<div id="signupError" class="error hidden"></div>
+
+<label>Email address</label>
+<input
+id="signupEmail"
+type="email"
+placeholder="you@example.com"
+autocomplete="email"
+>
+
+<label>Password</label>
+<input
+id="signupPassword"
+type="password"
+placeholder="Choose a password"
+autocomplete="new-password"
+>
+
+<button class="primary" onclick="signup()">
+Create account
+</button>
+
+<div class="auth-switch">
+Already have an account?
+<button class="link-button" onclick="showLogin()">
+Log in
+</button>
+</div>
+
+</div>
+
+</section>
+
+
+<!-- FORGOT PASSWORD -->
+<section id="forgotScreen" class="hidden">
+
+<div class="hero">
+<h1>Reset your password.</h1>
+<p>Enter your email address and we'll send you a password reset link.</p>
+</div>
+
+<div class="card">
+
+<div id="forgotError" class="error hidden"></div>
+<div id="forgotSuccess" class="success hidden"></div>
+
+<label>Email address</label>
+<input
+id="forgotEmail"
+type="email"
+placeholder="you@example.com"
+autocomplete="email"
+>
+
+<button class="primary" onclick="sendPasswordReset()">
+Send reset link
+</button>
+
+<div class="auth-switch">
+<button class="link-button" onclick="showLogin()">
+Back to login
+</button>
+</div>
+
+</div>
+
+</section>
+
+
+<!-- HOME -->
+<section id="homeScreen" class="hidden">
+
 <div class="hero">
 <h1>Never miss a price drop.</h1>
 <p>Give us the exact product link and we'll find the current price for you.</p>
-</div><div class="card">
-<div id="homeError" class="error hidden"></div><label>What are you looking for?</label>
-<input id="productName" placeholder="e.g. Garmin Fenix 8">
+</div>
+
+<div class="card">
+
+<div id="homeError" class="error hidden"></div>
+
+<label>What are you looking for?</label>
+<input
+id="productName"
+placeholder="e.g. Garmin Fenix 8"
+>
 
 <label>Product URL</label>
-<input id="productUrl" type="url" placeholder="https://www.example.com/product...">
+<input
+id="productUrl"
+type="url"
+placeholder="https://www.example.com/product..."
+>
 
-<button class="primary" onclick="inspectProduct()">Find Product</button>
+<button class="primary" onclick="inspectProduct()">
+Find Product
+</button>
 
 </div>
-</section><section id="loadingScreen" class="hidden">
+
+</section>
+
+
+<!-- LOADING -->
+<section id="loadingScreen" class="hidden">
+
 <div class="card loading">
+
 <div class="spinner"></div>
+
 <h2>Finding your product...</h2>
-<p>We're checking the product page for the current price and product details.</p>
+
+<p>
+We're checking the product page for the current price and product details.
+</p>
+
 </div>
-</section><section id="productScreen" class="hidden">
-<div class="card"><div id="productError" class="error hidden"></div><img id="productImage" class="product-image hidden" alt="Product"><div id="foundProductName" class="product-name"></div><div id="foundRetailer" class="retailer"></div><div id="foundPrice" class="price"></div><div class="target-box">
-<label>Alert me when the price reaches</label>
-<input id="targetPrice" type="number" min="0" step="0.01" placeholder="Target price">
-</div><div class="target-box">
-<label>Email address</label>
-<input id="emailAddress" type="email" placeholder="you@example.com" autocomplete="email">
-</div><button class="primary" onclick="startTracking()">Start Tracking</button>
+
+</section>
+
+
+<!-- PRODUCT -->
+<section id="productScreen" class="hidden">
+
+<div class="card">
+
+<div id="productError" class="error hidden"></div>
+
+<img
+id="productImage"
+class="product-image hidden"
+alt="Product"
+>
+
+<div id="foundProductName" class="product-name"></div>
+
+<div id="foundRetailer" class="retailer"></div>
+
+<div id="foundPrice" class="price"></div>
+
+<div class="target-box">
+
+<label>
+Alert me when the price reaches
+</label>
+
+<input
+id="targetPrice"
+type="number"
+min="0"
+step="0.01"
+placeholder="Target price"
+>
+
+</div>
+
+<button class="primary" onclick="startTracking()">
+Start Tracking
+</button>
 
 <br><br>
 
-<button class="secondary" onclick="showHome()">Start Again</button>
+<button class="secondary" onclick="showHome()">
+Start Again
+</button>
 
 </div>
-</section><section id="trackingScreen" class="hidden">
-<div class="card"><div class="success">
+
+</section>
+
+
+<!-- TRACKING -->
+<section id="trackingScreen" class="hidden">
+
+<div class="card">
+
+<div class="success">
+
 <strong>You're tracking it.</strong>
+
 <br><br>
-PriceDrop has recorded your target price and email address for this session.
-</div><div id="trackingSummary"></div><br><button class="primary" onclick="showHome()">Track Another Product</button>
+
+PriceDrop has recorded your target price for this session.
 
 </div>
-</section></main><script>
 
-const API_BASE="https://price-drop-api.kev-flanigan.workers.dev";
+<div id="trackingSummary"></div>
 
-let inspectedProduct=null;
+<br>
 
+<button class="primary" onclick="showHome()">
+Track Another Product
+</button>
+
+</div>
+
+</section>
+
+</main>
+
+
+<script>
+
+const SUPABASE_URL =
+"https://hqoxpnftbikqyeqhfrft.supabase.co";
+
+const SUPABASE_KEY =
+"sb_publishable_VunRgU8lX_s9ig17fXpYeQ_dk8jsmas";
+
+const supabaseClient =
+window.supabase.createClient(
+SUPABASE_URL,
+SUPABASE_KEY
+);
+
+const API_BASE =
+"https://price-drop-api.kev-flanigan.workers.dev";
+
+let inspectedProduct = null;
+
+
+/* -------------------------
+   SCREEN MANAGEMENT
+------------------------- */
 
 function hideAllScreens(){
-["homeScreen","loadingScreen","productScreen","trackingScreen"]
-.forEach(id=>document.getElementById(id).classList.add("hidden"));
+
+[
+"loginScreen",
+"signupScreen",
+"forgotScreen",
+"homeScreen",
+"loadingScreen",
+"productScreen",
+"trackingScreen"
+].forEach(id => {
+
+const element =
+document.getElementById(id);
+
+if(element){
+element.classList.add("hidden");
+}
+
+});
+
+}
+
+
+function showLogin(){
+
+hideAllScreens();
+
+document
+.getElementById("loginScreen")
+.classList.remove("hidden");
+
+}
+
+
+function showSignup(){
+
+hideAllScreens();
+
+document
+.getElementById("signupScreen")
+.classList.remove("hidden");
+
+}
+
+
+function showForgotPassword(){
+
+hideAllScreens();
+
+document
+.getElementById("forgotScreen")
+.classList.remove("hidden");
+
 }
 
 
 function showHome(){
+
 hideAllScreens();
-document.getElementById("homeScreen").classList.remove("hidden");
+
+document
+.getElementById("homeScreen")
+.classList.remove("hidden");
+
 }
 
 
+function showLoggedInUI(){
+
+document
+.getElementById("logoutButton")
+.classList.remove("hidden");
+
+showHome();
+
+}
+
+
+/* -------------------------
+   AUTHENTICATION
+------------------------- */
+
+async function login(){
+
+const email =
+document
+.getElementById("loginEmail")
+.value
+.trim();
+
+const password =
+document
+.getElementById("loginPassword")
+.value;
+
+const error =
+document
+.getElementById("loginError");
+
+error.classList.add("hidden");
+
+if(!email || !password){
+
+error.textContent =
+"Please enter your email address and password.";
+
+error.classList.remove("hidden");
+
+return;
+
+}
+
+const {
+data,
+error: authError
+} =
+await supabaseClient.auth.signInWithPassword({
+email,
+password
+});
+
+if(authError){
+
+error.textContent =
+authError.message;
+
+error.classList.remove("hidden");
+
+return;
+
+}
+
+if(data.session){
+
+showLoggedInUI();
+
+}
+
+}
+
+
+async function signup(){
+
+const email =
+document
+.getElementById("signupEmail")
+.value
+.trim();
+
+const password =
+document
+.getElementById("signupPassword")
+.value;
+
+const error =
+document
+.getElementById("signupError");
+
+error.classList.add("hidden");
+
+if(!email || !password){
+
+error.textContent =
+"Please enter your email address and password.";
+
+error.classList.remove("hidden");
+
+return;
+
+}
+
+if(password.length < 8){
+
+error.textContent =
+"Password must be at least 8 characters.";
+
+error.classList.remove("hidden");
+
+return;
+
+}
+
+const {
+data,
+error: authError
+} =
+await supabaseClient.auth.signUp({
+email,
+password
+});
+
+if(authError){
+
+error.textContent =
+authError.message;
+
+error.classList.remove("hidden");
+
+return;
+
+}
+
+if(data.user && !data.session){
+
+error.textContent =
+"Account created. Please check your email to verify your account.";
+
+error.classList.remove("hidden");
+
+return;
+
+}
+
+if(data.session){
+
+showLoggedInUI();
+
+}
+
+}
+
+
+async function logout(){
+
+await supabaseClient.auth.signOut();
+
+inspectedProduct = null;
+
+document
+.getElementById("logoutButton")
+.classList.add("hidden");
+
+showLogin();
+
+}
+
+
+async function sendPasswordReset(){
+
+const email =
+document
+.getElementById("forgotEmail")
+.value
+.trim();
+
+const error =
+document
+.getElementById("forgotError");
+
+const success =
+document
+.getElementById("forgotSuccess");
+
+error.classList.add("hidden");
+success.classList.add("hidden");
+
+if(!email){
+
+error.textContent =
+"Please enter your email address.";
+
+error.classList.remove("hidden");
+
+return;
+
+}
+
+const {
+error: resetError
+} =
+await supabaseClient.auth.resetPasswordForEmail(
+email,
+{
+redirectTo:
+"https://price-drop.pages.dev/"
+}
+);
+
+if(resetError){
+
+error.textContent =
+resetError.message;
+
+error.classList.remove("hidden");
+
+return;
+
+}
+
+success.textContent =
+"If an account exists for that email address, a password reset email has been sent.";
+
+success.classList.remove("hidden");
+
+}
+
+
+/* -------------------------
+   PRODUCT LOOKUP
+------------------------- */
+
 async function inspectProduct(){
 
-const name=document.getElementById("productName").value.trim();
-const url=document.getElementById("productUrl").value.trim();
-const error=document.getElementById("homeError");
+const name =
+document
+.getElementById("productName")
+.value
+.trim();
+
+const url =
+document
+.getElementById("productUrl")
+.value
+.trim();
+
+const error =
+document
+.getElementById("homeError");
 
 error.classList.add("hidden");
 
 if(!name){
-return showHomeError("Please enter the product you are looking for.");
+
+return showHomeError(
+"Please enter the product you are looking for."
+);
+
 }
 
-if(!url||!isValidUrl(url)){
-return showHomeError("Please enter a valid product URL.");
+if(!url || !isValidUrl(url)){
+
+return showHomeError(
+"Please enter a valid product URL."
+);
+
 }
 
 hideAllScreens();
 
-document.getElementById("loadingScreen").classList.remove("hidden");
+document
+.getElementById("loadingScreen")
+.classList.remove("hidden");
 
 try{
 
-const response=await fetch(
-API_BASE+"/api/product/inspect",
+const response =
+await fetch(
+API_BASE + "/api/product/inspect",
 {
 method:"POST",
+
 headers:{
 "Content-Type":"application/json"
 },
+
 body:JSON.stringify({
 productName:name,
 url:url
 })
+
 }
 );
 
-const product=await response.json();
+const product =
+await response.json();
 
 if(!response.ok){
-throw new Error(product.error||"Unable to inspect product.");
+
+throw new Error(
+product.error ||
+"Unable to inspect product."
+);
+
 }
 
-if(typeof product.price!=="number"){
-throw new Error("The product page did not return a valid price.");
+if(typeof product.price !== "number"){
+
+throw new Error(
+"The product page did not return a valid price."
+);
+
 }
 
-inspectedProduct=product;
+inspectedProduct =
+product;
 
 displayProduct(product);
 
@@ -145,10 +912,13 @@ displayProduct(product);
 
 hideAllScreens();
 
-document.getElementById("homeScreen").classList.remove("hidden");
+document
+.getElementById("homeScreen")
+.classList.remove("hidden");
 
 showHomeError(
-err.message||"We couldn't retrieve the live product details."
+err.message ||
+"We couldn't retrieve the live product details."
 );
 
 }
@@ -160,22 +930,38 @@ function displayProduct(product){
 
 hideAllScreens();
 
-document.getElementById("productScreen").classList.remove("hidden");
+document
+.getElementById("productScreen")
+.classList.remove("hidden");
 
-document.getElementById("foundProductName").textContent=
-product.productName||"Unknown product";
+document
+.getElementById("foundProductName")
+.textContent =
+product.productName ||
+"Unknown product";
 
-document.getElementById("foundRetailer").textContent=
-product.retailer||"Unknown retailer";
+document
+.getElementById("foundRetailer")
+.textContent =
+product.retailer ||
+"Unknown retailer";
 
-document.getElementById("foundPrice").textContent=
-formatPrice(product.price,product.currency);
+document
+.getElementById("foundPrice")
+.textContent =
+formatPrice(
+product.price,
+product.currency
+);
 
-const image=document.getElementById("productImage");
+const image =
+document.getElementById("productImage");
 
 if(product.image){
 
-image.src=product.image;
+image.src =
+product.image;
+
 image.classList.remove("hidden");
 
 }else{
@@ -184,91 +970,96 @@ image.classList.add("hidden");
 
 }
 
-const suggestedTarget=product.price*0.85;
+const suggestedTarget =
+product.price * 0.85;
 
-document.getElementById("targetPrice").value=
+document
+.getElementById("targetPrice")
+.value =
 suggestedTarget.toFixed(2);
-
-document.getElementById("emailAddress").value="";
 
 }
 
 
 function startTracking(){
 
-const target=parseFloat(
-document.getElementById("targetPrice").value
+const target =
+parseFloat(
+document
+.getElementById("targetPrice")
+.value
 );
 
-const email=document.getElementById("emailAddress").value.trim();
-
-const error=document.getElementById("productError");
+const error =
+document
+.getElementById("productError");
 
 error.classList.add("hidden");
 
 if(!inspectedProduct){
 
-error.textContent="Product information is missing.";
+error.textContent =
+"Product information is missing.";
+
 error.classList.remove("hidden");
+
 return;
 
 }
 
-if(!target||target<=0){
+if(!target || target <= 0){
 
-error.textContent="Please enter a valid target price.";
+error.textContent =
+"Please enter a valid target price.";
+
 error.classList.remove("hidden");
+
 return;
 
 }
 
-if(target>=inspectedProduct.price){
+if(target >= inspectedProduct.price){
 
-error.textContent=
+error.textContent =
 "Your target price should be below the current price.";
 
 error.classList.remove("hidden");
+
 return;
 
 }
 
-if(!email||!isValidEmail(email)){
-
-error.textContent="Please enter a valid email address.";
-
-error.classList.remove("hidden");
-return;
-
-}
-
-document.getElementById("trackingSummary").innerHTML=`
+document
+.getElementById("trackingSummary")
+.innerHTML = `
 
 <p>
-<strong>${escapeHtml(inspectedProduct.productName)}</strong>
+<strong>
+${escapeHtml(inspectedProduct.productName)}
+</strong>
 </p>
 
 <p>
-${escapeHtml(inspectedProduct.retailer||"")}
+${escapeHtml(inspectedProduct.retailer || "")}
 </p>
 
 <p>
 Current price:
 <strong>
-${formatPrice(inspectedProduct.price,inspectedProduct.currency)}
+${formatPrice(
+inspectedProduct.price,
+inspectedProduct.currency
+)}
 </strong>
 </p>
 
 <p>
 Target price:
 <strong>
-${formatPrice(target,inspectedProduct.currency)}
-</strong>
-</p>
-
-<p>
-Email:
-<strong>
-${escapeHtml(email)}
+${formatPrice(
+target,
+inspectedProduct.currency
+)}
 </strong>
 </p>
 
@@ -276,10 +1067,16 @@ ${escapeHtml(email)}
 
 hideAllScreens();
 
-document.getElementById("trackingScreen").classList.remove("hidden");
+document
+.getElementById("trackingScreen")
+.classList.remove("hidden");
 
 }
 
+
+/* -------------------------
+   HELPERS
+------------------------- */
 
 function formatPrice(price,currency="GBP"){
 
@@ -289,13 +1086,14 @@ return new Intl.NumberFormat(
 "en-GB",
 {
 style:"currency",
-currency:currency||"GBP"
+currency:currency || "GBP"
 }
 ).format(price);
 
 }catch{
 
-return "£"+Number(price).toFixed(2);
+return "£" +
+Number(price).toFixed(2);
 
 }
 
@@ -306,10 +1104,13 @@ function isValidUrl(value){
 
 try{
 
-const url=new URL(value);
+const url =
+new URL(value);
 
-return url.protocol==="http:"||
-url.protocol==="https:";
+return (
+url.protocol === "http:" ||
+url.protocol === "https:"
+);
 
 }catch{
 
@@ -320,18 +1121,14 @@ return false;
 }
 
 
-function isValidEmail(value){
-
-return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
-
-}
-
-
 function showHomeError(message){
 
-const error=document.getElementById("homeError");
+const error =
+document
+.getElementById("homeError");
 
-error.textContent=message;
+error.textContent =
+message;
 
 error.classList.remove("hidden");
 
@@ -350,7 +1147,54 @@ return String(value)
 }
 
 
-showHome();
+/* -------------------------
+   STARTUP
+------------------------- */
 
-</script></body>
+async function initialise(){
+
+const {
+data
+} =
+await supabaseClient.auth.getSession();
+
+if(data.session){
+
+showLoggedInUI();
+
+}else{
+
+showLogin();
+
+}
+
+}
+
+
+supabaseClient.auth.onAuthStateChange(
+(event,session) => {
+
+if(session){
+
+showLoggedInUI();
+
+}else{
+
+document
+.getElementById("logoutButton")
+.classList.add("hidden");
+
+showLogin();
+
+}
+
+}
+);
+
+initialise();
+
+</script>
+
+</body>
 </html>
+
