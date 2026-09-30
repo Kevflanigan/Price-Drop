@@ -433,6 +433,112 @@ button.view{
   background:#eee;
 }
 
+.price-history{
+  margin-top:20px;
+  padding-top:20px;
+  border-top:1px solid #eee;
+}
+
+.history-summary{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+  margin-bottom:18px;
+}
+
+.history-stat{
+  background:#f7f7f8;
+  border-radius:10px;
+  padding:14px;
+}
+
+.history-stat-label{
+  color:#666;
+  font-size:12px;
+  margin-bottom:5px;
+}
+
+.history-stat-value{
+  font-size:18px;
+  font-weight:800;
+}
+
+.history-chart{
+  width:100%;
+  height:220px;
+  background:#fafafa;
+  border:1px solid #eee;
+  border-radius:12px;
+  padding:12px;
+  box-sizing:border-box;
+  margin-bottom:15px;
+}
+
+.history-chart svg{
+  width:100%;
+  height:100%;
+  display:block;
+}
+
+.history-line{
+  fill:none;
+  stroke:#7c3aed;
+  stroke-width:3;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+
+.history-point{
+  fill:#fff;
+  stroke:#7c3aed;
+  stroke-width:3;
+}
+
+.history-list{
+  max-height:220px;
+  overflow-y:auto;
+  border-top:1px solid #eee;
+}
+
+.history-row{
+  display:flex;
+  justify-content:space-between;
+  gap:15px;
+  padding:10px 0;
+  border-bottom:1px solid #eee;
+  font-size:13px;
+}
+
+.history-date{
+  color:#666;
+}
+
+.history-price{
+  font-weight:800;
+}
+
+.history-loading{
+  color:#666;
+  font-size:14px;
+  padding:15px 0;
+}
+
+.history-error{
+  color:#9f1239;
+  background:#fff1f2;
+  border:1px solid #fecdd3;
+  padding:12px;
+  border-radius:8px;
+  font-size:13px;
+}
+
+.history-toggle{
+  width:100%;
+  margin-top:15px;
+}
+
+
+  
 @media(max-width:600px){
 
   .container{
@@ -1311,9 +1417,7 @@ async function loadDashboard(){
 
 }
 
-
-function createTrackedProductCard(product){
-
+unction createTrackedProductCard(product){
   const card =
     document.createElement("div");
 
@@ -1368,13 +1472,11 @@ function createTrackedProductCard(product){
 
   card.appendChild(top);
 
-
   const prices =
     document.createElement("div");
 
   prices.className =
     "tracked-prices";
-
 
   const currentBox =
     document.createElement("div");
@@ -1406,7 +1508,6 @@ function createTrackedProductCard(product){
   currentBox.appendChild(currentLabel);
   currentBox.appendChild(currentValue);
 
-
   const targetBox =
     document.createElement("div");
 
@@ -1437,19 +1538,54 @@ function createTrackedProductCard(product){
   targetBox.appendChild(targetLabel);
   targetBox.appendChild(targetValue);
 
-
   prices.appendChild(currentBox);
   prices.appendChild(targetBox);
 
   card.appendChild(prices);
 
+  const historyId =
+    `history-${product.id}`;
+
+  const history =
+    document.createElement("div");
+
+  history.id =
+    historyId;
+
+  history.className =
+    "price-history hidden";
+
+  card.appendChild(history);
+
+  const historyButton =
+    document.createElement("button");
+
+  historyButton.className =
+    "secondary history-toggle";
+
+  historyButton.textContent =
+    "View Price History";
+
+  historyButton.onclick =
+    function(){
+      togglePriceHistory(
+        product.id,
+        historyId
+      );
+
+      historyButton.textContent =
+        history.classList.contains("hidden")
+          ? "View Price History"
+          : "Hide Price History";
+    };
+
+  card.appendChild(historyButton);
 
   const actions =
     document.createElement("div");
 
   actions.className =
     "tracked-actions";
-
 
   const view =
     document.createElement("a");
@@ -1469,7 +1605,6 @@ function createTrackedProductCard(product){
   view.rel =
     "noopener noreferrer";
 
-
   const deleteButton =
     document.createElement("button");
 
@@ -1484,16 +1619,261 @@ function createTrackedProductCard(product){
       requestDelete(product.id);
     };
 
-
   actions.appendChild(view);
   actions.appendChild(deleteButton);
 
   card.appendChild(actions);
 
   return card;
+}
+async function togglePriceHistory(productId, containerId){
+  const container =
+    document.getElementById(containerId);
 
+  if(!container){
+    return;
+  }
+
+  if(!container.classList.contains("hidden")){
+    container.classList.add("hidden");
+    return;
+  }
+
+  container.classList.remove("hidden");
+
+  container.innerHTML = `
+    <div class="history-loading">
+      Loading price history...
+    </div>
+  `;
+
+  const {
+    data,
+    error
+  } =
+  await supabaseClient
+    .from("price_history")
+    .select("price,recorded_at")
+    .eq("tracked_product_id", productId)
+    .order("recorded_at", {
+      ascending:true
+    });
+
+  if(error){
+    console.error(error);
+
+    container.innerHTML = `
+      <div class="history-error">
+        Unable to load price history.
+      </div>
+    `;
+
+    return;
+  }
+
+  if(!data || data.length === 0){
+    container.innerHTML = `
+      <div class="history-loading">
+        No price history has been recorded yet.
+      </div>
+    `;
+
+    return;
+  }
+
+  const prices =
+    data
+      .map(row => Number(row.price))
+      .filter(price => Number.isFinite(price));
+
+  const lowestPrice =
+    Math.min(...prices);
+
+  const latestPrice =
+    prices[prices.length - 1];
+
+  const summary = document.createElement("div");
+  summary.className = "history-summary";
+
+  const currentStat =
+    document.createElement("div");
+  currentStat.className = "history-stat";
+
+  currentStat.innerHTML = `
+    <div class="history-stat-label">
+      Current price
+    </div>
+    <div class="history-stat-value">
+      ${formatPrice(latestPrice)}
+    </div>
+  `;
+
+  const lowestStat =
+    document.createElement("div");
+  lowestStat.className = "history-stat";
+
+  lowestStat.innerHTML = `
+    <div class="history-stat-label">
+      Lowest recorded
+    </div>
+    <div class="history-stat-value">
+      ${formatPrice(lowestPrice)}
+    </div>
+  `;
+
+  summary.appendChild(currentStat);
+  summary.appendChild(lowestStat);
+
+  const chart =
+    createPriceHistoryChart(data);
+
+  const historyList =
+    document.createElement("div");
+  historyList.className =
+    "history-list";
+
+  [...data]
+    .reverse()
+    .forEach(row => {
+      const rowElement =
+        document.createElement("div");
+
+      rowElement.className =
+        "history-row";
+
+      const date =
+        document.createElement("div");
+
+      date.className =
+        "history-date";
+
+      date.textContent =
+        new Date(row.recorded_at)
+          .toLocaleString(
+            "en-GB",
+            {
+              day:"numeric",
+              month:"short",
+              year:"numeric",
+              hour:"2-digit",
+              minute:"2-digit"
+            }
+          );
+
+      const price =
+        document.createElement("div");
+
+      price.className =
+        "history-price";
+
+      price.textContent =
+        formatPrice(row.price);
+
+      rowElement.appendChild(date);
+      rowElement.appendChild(price);
+
+      historyList.appendChild(rowElement);
+    });
+
+  container.innerHTML = "";
+  container.appendChild(summary);
+  container.appendChild(chart);
+  container.appendChild(historyList);
 }
 
+function createPriceHistoryChart(data){
+  const wrapper =
+    document.createElement("div");
+
+  wrapper.className =
+    "history-chart";
+
+  const width = 700;
+  const height = 190;
+  const padding = 25;
+
+  const prices =
+    data
+      .map(row => Number(row.price))
+      .filter(price => Number.isFinite(price));
+
+  const minPrice =
+    Math.min(...prices);
+
+  const maxPrice =
+    Math.max(...prices);
+
+  const range =
+    maxPrice === minPrice
+      ? 1
+      : maxPrice - minPrice;
+
+  const points =
+    data.map((row,index) => {
+      const price =
+        Number(row.price);
+
+      const x =
+        data.length === 1
+          ? width / 2
+          : padding +
+            (
+              index /
+              (data.length - 1)
+            ) *
+            (width - padding * 2);
+
+      const y =
+        height -
+        padding -
+        (
+          (price - minPrice) /
+          range
+        ) *
+        (height - padding * 2);
+
+      return {
+        x,
+        y,
+        price
+      };
+    });
+
+  const path =
+    points
+      .map((point,index) =>
+        `${index === 0 ? "M" : "L"} ${point.x} ${point.y}`
+      )
+      .join(" ");
+
+  const circles =
+    points
+      .map(point =>
+        `<circle
+          class="history-point"
+          cx="${point.x}"
+          cy="${point.y}"
+          r="5"
+        ></circle>`
+      )
+      .join("");
+
+  wrapper.innerHTML = `
+    <svg
+      viewBox="0 0 ${width} ${height}"
+      preserveAspectRatio="none"
+      aria-label="Price history chart"
+    >
+      <path
+        class="history-line"
+        d="${path}"
+      ></path>
+      ${circles}
+    </svg>
+  `;
+
+  return wrapper;
+}
 
 /* -------------------------
    DELETE TRACKING
