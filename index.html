@@ -4,598 +4,104 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PriceDrop</title>
-
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 <style>
 *{box-sizing:border-box}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f7f7f8;color:#171717}
+header{background:#111;color:#fff;padding:18px 24px;display:flex;justify-content:space-between;align-items:center}
+.logo{font-size:22px;font-weight:800}.logo span{color:#7c3aed}
+.header-actions{display:flex;align-items:center;gap:12px}
+.account-email{color:#bbb;font-size:13px}
+.logout{background:#333;color:#fff;border:0;padding:8px 13px;border-radius:7px;cursor:pointer}
+.container{max-width:820px;margin:auto;padding:45px 20px}
+.hero{text-align:center;margin-bottom:35px}
+.hero h1{font-size:38px;margin:0 0 12px}
+.hero p{color:#666;font-size:17px;line-height:1.5}
+.card{background:#fff;border-radius:16px;padding:28px;box-shadow:0 5px 25px #0000000f;margin-bottom:20px}
+label{display:block;font-weight:700;margin-bottom:8px;font-size:14px}
+input{width:100%;padding:14px;border:1px solid #d5d5d5;border-radius:9px;font-size:16px;margin-bottom:20px}
+button.primary{width:100%;background:#7c3aed;color:#fff;border:0;padding:15px;border-radius:9px;font-size:16px;font-weight:700;cursor:pointer}
+button.primary:hover{background:#6d28d9}
+button.primary:disabled{opacity:.6;cursor:not-allowed}
+button.secondary{background:#eee;border:0;padding:11px 15px;border-radius:8px;cursor:pointer;font-size:14px}
+button.danger{background:#fff;color:#b91c1c;border:1px solid #fecaca;padding:9px 13px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:700}
+button.danger:hover{background:#fef2f2}
+button.view{background:#f5f3ff;color:#6d28d9;border:1px solid #ddd6fe;padding:9px 13px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:700;text-decoration:none}
+.link-button{background:none;border:0;color:#7c3aed;cursor:pointer;padding:0;font-size:14px}
+.hidden{display:none!important}
+.loading{text-align:center;padding:40px 10px}
+.spinner{width:42px;height:42px;border:4px solid #eee;border-top-color:#7c3aed;border-radius:50%;animation:spin .8s linear infinite;margin:auto auto 20px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.product-image{width:100%;max-height:280px;object-fit:contain;border-radius:12px;background:#f7f7f7;margin-bottom:20px}
+.product-name{font-size:24px;font-weight:800;margin-bottom:8px}
+.retailer{color:#666;margin-bottom:20px}
+.price{font-size:34px;font-weight:800;margin-bottom:25px}
+.target-box{background:#f5f3ff;border:1px solid #ddd6fe;padding:18px;border-radius:10px;margin-bottom:20px}
+.target-box input{margin-bottom:0}
+.error{background:#fff1f2;border:1px solid #fecdd3;color:#9f1239;padding:13px;border-radius:9px;margin-bottom:18px}
+.success{background:#f0fdf4;border:1px solid #bbf7d0;color:#166534;padding:18px;border-radius:9px;line-height:1.5}
+.auth-switch{text-align:center;margin-top:20px;color:#666;font-size:14px}
+.auth-note{text-align:center;color:#666;font-size:13px;line-height:1.5;margin-top:18px}
+.account-info{text-align:center;color:#666;font-size:14px;margin-bottom:20px}
+
+.dashboard-header{display:flex;justify-content:space-between;align-items:center;gap:15px;margin-bottom:22px}
+.dashboard-header h1{margin:0 0 6px;font-size:30px}
+.dashboard-header p{margin:0;color:#666}
+.dashboard-actions{display:flex;gap:10px;flex-shrink:0}
+.dashboard-actions button{white-space:nowrap}
+.tracked-list{display:flex;flex-direction:column;gap:16px}
+.tracked-card{background:#fff;border-radius:14px;padding:22px;box-shadow:0 4px 20px #0000000d;border:1px solid #eee}
+.tracked-top{display:flex;justify-content:space-between;gap:15px;align-items:flex-start}
+.tracked-name{font-size:19px;font-weight:800;line-height:1.3;margin-bottom:6px}
+.tracked-retailer{color:#666;font-size:14px}
+.status{display:inline-block;background:#ecfdf5;color:#047857;border:1px solid #a7f3d0;border-radius:999px;padding:5px 10px;font-size:12px;font-weight:700;white-space:nowrap}
+.tracked-prices{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:20px 0}
+.price-box{background:#f7f7f8;border-radius:10px;padding:14px}
+.price-label{color:#666;font-size:12px;margin-bottom:5px}
+.price-value{font-size:20px;font-weight:800}
+.tracked-actions{display:flex;gap:9px;justify-content:flex-end;border-top:1px solid #eee;padding-top:15px}
+.empty-state{text-align:center;padding:45px 20px}
+.empty-state h2{margin:0 0 10px}
+.empty-state p{color:#666;margin-bottom:25px}
+.empty-state .primary{width:auto;padding-left:25px;padding-right:25px}
+.dashboard-message{margin-bottom:18px}
+.confirm-delete{background:#fff7ed;border:1px solid #fed7aa;color:#9a3412;padding:14px;border-radius:9px;margin-bottom:18px;display:flex;justify-content:space-between;align-items:center;gap:15px}
+.confirm-delete-actions{display:flex;gap:8px}
+.confirm-delete button{padding:8px 12px;border-radius:7px;border:0;cursor:pointer}
+.confirm-delete .confirm{background:#dc2626;color:#fff}
+.confirm-delete .cancel{background:#eee}
+
+.price-history{margin-top:20px;padding-top:20px;border-top:1px solid #eee}
+.history-summary{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px}
+.history-stat{background:#f7f7f8;border-radius:10px;padding:14px}
+.history-stat-label{color:#666;font-size:12px;margin-bottom:5px}
+.history-stat-value{font-size:18px;font-weight:800}
+.history-chart{width:100%;height:220px;background:#fafafa;border:1px solid #eee;border-radius:12px;padding:12px;box-sizing:border-box;margin-bottom:15px}
+.history-chart svg{width:100%;height:100%;display:block}
+.history-line{fill:none;stroke:#7c3aed;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.history-point{fill:#fff;stroke:#7c3aed;stroke-width:3}
+.history-list{max-height:220px;overflow-y:auto;border-top:1px solid #eee}
+.history-row{display:flex;justify-content:space-between;gap:15px;padding:10px 0;border-bottom:1px solid #eee;font-size:13px}
+.history-date{color:#666}
+.history-price{font-weight:800}
+.history-loading{color:#666;font-size:14px;padding:15px 0}
+.history-error{color:#9f1239;background:#fff1f2;border:1px solid #fecdd3;padding:12px;border-radius:8px;font-size:13px}
+.history-toggle{width:100%;margin-top:15px}
 
-body{
-  margin:0;
-  font-family:Arial,Helvetica,sans-serif;
-  background:#f7f7f8;
-  color:#171717;
-}
-
-header{
-  background:#111;
-  color:#fff;
-  padding:18px 24px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-}
-
-.logo{
-  font-size:22px;
-  font-weight:800;
-}
-
-.logo span{
-  color:#7c3aed;
-}
-
-.header-actions{
-  display:flex;
-  align-items:center;
-  gap:12px;
-}
-
-.account-email{
-  color:#bbb;
-  font-size:13px;
-}
-
-.logout{
-  background:#333;
-  color:#fff;
-  border:0;
-  padding:8px 13px;
-  border-radius:7px;
-  cursor:pointer;
-}
-
-.container{
-  max-width:820px;
-  margin:auto;
-  padding:45px 20px;
-}
-
-.hero{
-  text-align:center;
-  margin-bottom:35px;
-}
-
-.hero h1{
-  font-size:38px;
-  margin:0 0 12px;
-}
-
-.hero p{
-  color:#666;
-  font-size:17px;
-  line-height:1.5;
-}
-
-.card{
-  background:#fff;
-  border-radius:16px;
-  padding:28px;
-  box-shadow:0 5px 25px #0000000f;
-  margin-bottom:20px;
-}
-
-label{
-  display:block;
-  font-weight:700;
-  margin-bottom:8px;
-  font-size:14px;
-}
-
-input{
-  width:100%;
-  padding:14px;
-  border:1px solid #d5d5d5;
-  border-radius:9px;
-  font-size:16px;
-  margin-bottom:20px;
-}
-
-button.primary{
-  width:100%;
-  background:#7c3aed;
-  color:#fff;
-  border:0;
-  padding:15px;
-  border-radius:9px;
-  font-size:16px;
-  font-weight:700;
-  cursor:pointer;
-}
-
-button.primary:hover{
-  background:#6d28d9;
-}
-
-button.primary:disabled{
-  opacity:.6;
-  cursor:not-allowed;
-}
-
-button.secondary{
-  background:#eee;
-  border:0;
-  padding:11px 15px;
-  border-radius:8px;
-  cursor:pointer;
-  font-size:14px;
-}
-
-button.danger{
-  background:#fff;
-  color:#b91c1c;
-  border:1px solid #fecaca;
-  padding:9px 13px;
-  border-radius:8px;
-  cursor:pointer;
-  font-size:13px;
-  font-weight:700;
-}
-
-button.danger:hover{
-  background:#fef2f2;
-}
-
-button.view{
-  background:#f5f3ff;
-  color:#6d28d9;
-  border:1px solid #ddd6fe;
-  padding:9px 13px;
-  border-radius:8px;
-  cursor:pointer;
-  font-size:13px;
-  font-weight:700;
-  text-decoration:none;
-}
-
-.link-button{
-  background:none;
-  border:0;
-  color:#7c3aed;
-  cursor:pointer;
-  padding:0;
-  font-size:14px;
-}
-
-.hidden{
-  display:none!important;
-}
-
-.loading{
-  text-align:center;
-  padding:40px 10px;
-}
-
-.spinner{
-  width:42px;
-  height:42px;
-  border:4px solid #eee;
-  border-top-color:#7c3aed;
-  border-radius:50%;
-  animation:spin .8s linear infinite;
-  margin:auto auto 20px;
-}
-
-@keyframes spin{
-  to{transform:rotate(360deg)}
-}
-
-.product-image{
-  width:100%;
-  max-height:280px;
-  object-fit:contain;
-  border-radius:12px;
-  background:#f7f7f7;
-  margin-bottom:20px;
-}
-
-.product-name{
-  font-size:24px;
-  font-weight:800;
-  margin-bottom:8px;
-}
-
-.retailer{
-  color:#666;
-  margin-bottom:20px;
-}
-
-.price{
-  font-size:34px;
-  font-weight:800;
-  margin-bottom:25px;
-}
-
-.target-box{
-  background:#f5f3ff;
-  border:1px solid #ddd6fe;
-  padding:18px;
-  border-radius:10px;
-  margin-bottom:20px;
-}
-
-.target-box input{
-  margin-bottom:0;
-}
-
-.error{
-  background:#fff1f2;
-  border:1px solid #fecdd3;
-  color:#9f1239;
-  padding:13px;
-  border-radius:9px;
-  margin-bottom:18px;
-}
-
-.success{
-  background:#f0fdf4;
-  border:1px solid #bbf7d0;
-  color:#166534;
-  padding:18px;
-  border-radius:9px;
-  line-height:1.5;
-}
-
-.auth-switch{
-  text-align:center;
-  margin-top:20px;
-  color:#666;
-  font-size:14px;
-}
-
-.auth-note{
-  text-align:center;
-  color:#666;
-  font-size:13px;
-  line-height:1.5;
-  margin-top:18px;
-}
-
-.account-info{
-  text-align:center;
-  color:#666;
-  font-size:14px;
-  margin-bottom:20px;
-}
-
-/* DASHBOARD */
-
-.dashboard-header{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:15px;
-  margin-bottom:22px;
-}
-
-.dashboard-header h1{
-  margin:0 0 6px;
-  font-size:30px;
-}
-
-.dashboard-header p{
-  margin:0;
-  color:#666;
-}
-
-.dashboard-actions{
-  display:flex;
-  gap:10px;
-  flex-shrink:0;
-}
-
-.dashboard-actions button{
-  white-space:nowrap;
-}
-
-.tracked-list{
-  display:flex;
-  flex-direction:column;
-  gap:16px;
-}
-
-.tracked-card{
-  background:#fff;
-  border-radius:14px;
-  padding:22px;
-  box-shadow:0 4px 20px #0000000d;
-  border:1px solid #eee;
-}
-
-.tracked-top{
-  display:flex;
-  justify-content:space-between;
-  gap:15px;
-  align-items:flex-start;
-}
-
-.tracked-name{
-  font-size:19px;
-  font-weight:800;
-  line-height:1.3;
-  margin-bottom:6px;
-}
-
-.tracked-retailer{
-  color:#666;
-  font-size:14px;
-}
-
-.status{
-  display:inline-block;
-  background:#ecfdf5;
-  color:#047857;
-  border:1px solid #a7f3d0;
-  border-radius:999px;
-  padding:5px 10px;
-  font-size:12px;
-  font-weight:700;
-  white-space:nowrap;
-}
-
-.tracked-prices{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:12px;
-  margin:20px 0;
-}
-
-.price-box{
-  background:#f7f7f8;
-  border-radius:10px;
-  padding:14px;
-}
-
-.price-label{
-  color:#666;
-  font-size:12px;
-  margin-bottom:5px;
-}
-
-.price-value{
-  font-size:20px;
-  font-weight:800;
-}
-
-.tracked-actions{
-  display:flex;
-  gap:9px;
-  justify-content:flex-end;
-  border-top:1px solid #eee;
-  padding-top:15px;
-}
-
-.empty-state{
-  text-align:center;
-  padding:45px 20px;
-}
-
-.empty-state h2{
-  margin:0 0 10px;
-}
-
-.empty-state p{
-  color:#666;
-  margin-bottom:25px;
-}
-
-.empty-state .primary{
-  width:auto;
-  padding-left:25px;
-  padding-right:25px;
-}
-
-.dashboard-message{
-  margin-bottom:18px;
-}
-
-.confirm-delete{
-  background:#fff7ed;
-  border:1px solid #fed7aa;
-  color:#9a3412;
-  padding:14px;
-  border-radius:9px;
-  margin-bottom:18px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:15px;
-}
-
-.confirm-delete-actions{
-  display:flex;
-  gap:8px;
-}
-
-.confirm-delete button{
-  padding:8px 12px;
-  border-radius:7px;
-  border:0;
-  cursor:pointer;
-}
-
-.confirm-delete .confirm{
-  background:#dc2626;
-  color:#fff;
-}
-
-.confirm-delete .cancel{
-  background:#eee;
-}
-
-.price-history{
-  margin-top:20px;
-  padding-top:20px;
-  border-top:1px solid #eee;
-}
-
-.history-summary{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:12px;
-  margin-bottom:18px;
-}
-
-.history-stat{
-  background:#f7f7f8;
-  border-radius:10px;
-  padding:14px;
-}
-
-.history-stat-label{
-  color:#666;
-  font-size:12px;
-  margin-bottom:5px;
-}
-
-.history-stat-value{
-  font-size:18px;
-  font-weight:800;
-}
-
-.history-chart{
-  width:100%;
-  height:220px;
-  background:#fafafa;
-  border:1px solid #eee;
-  border-radius:12px;
-  padding:12px;
-  box-sizing:border-box;
-  margin-bottom:15px;
-}
-
-.history-chart svg{
-  width:100%;
-  height:100%;
-  display:block;
-}
-
-.history-line{
-  fill:none;
-  stroke:#7c3aed;
-  stroke-width:3;
-  stroke-linecap:round;
-  stroke-linejoin:round;
-}
-
-.history-point{
-  fill:#fff;
-  stroke:#7c3aed;
-  stroke-width:3;
-}
-
-.history-list{
-  max-height:220px;
-  overflow-y:auto;
-  border-top:1px solid #eee;
-}
-
-.history-row{
-  display:flex;
-  justify-content:space-between;
-  gap:15px;
-  padding:10px 0;
-  border-bottom:1px solid #eee;
-  font-size:13px;
-}
-
-.history-date{
-  color:#666;
-}
-
-.history-price{
-  font-weight:800;
-}
-
-.history-loading{
-  color:#666;
-  font-size:14px;
-  padding:15px 0;
-}
-
-.history-error{
-  color:#9f1239;
-  background:#fff1f2;
-  border:1px solid #fecdd3;
-  padding:12px;
-  border-radius:8px;
-  font-size:13px;
-}
-
-.history-toggle{
-  width:100%;
-  margin-top:15px;
-}
-
-
-  
 @media(max-width:600px){
-
-  .container{
-    padding:30px 15px;
-  }
-
-  .hero h1{
-    font-size:31px;
-  }
-
-  .card{
-    padding:21px;
-  }
-
-  .header-actions{
-    gap:7px;
-  }
-
-  .account-email{
-    display:none;
-  }
-
-  .dashboard-header{
-    align-items:flex-start;
-    flex-direction:column;
-  }
-
-  .dashboard-actions{
-    width:100%;
-  }
-
-  .dashboard-actions button{
-    flex:1;
-  }
-
-  .tracked-top{
-    flex-direction:column;
-  }
-
-  .tracked-prices{
-    grid-template-columns:1fr;
-  }
-
-  .tracked-actions{
-    justify-content:stretch;
-  }
-
-  .tracked-actions button,
-  .tracked-actions a{
-    flex:1;
-    text-align:center;
-  }
-
-  .confirm-delete{
-    flex-direction:column;
-    align-items:flex-start;
-  }
+.container{padding:30px 15px}
+.hero h1{font-size:31px}
+.card{padding:21px}
+.header-actions{gap:7px}
+.account-email{display:none}
+.dashboard-header{align-items:flex-start;flex-direction:column}
+.dashboard-actions{width:100%}
+.dashboard-actions button{flex:1}
+.tracked-top{flex-direction:column}
+.tracked-prices{grid-template-columns:1fr}
+.tracked-actions{justify-content:stretch}
+.tracked-actions button,.tracked-actions a{flex:1;text-align:center}
+.confirm-delete{flex-direction:column;align-items:flex-start}
 }
 </style>
 </head>
@@ -603,1825 +109,952 @@ button.view{
 <body>
 
 <header>
-  <div class="logo">Price<span>Drop</span></div>
-
-  <div class="header-actions">
-    <div id="headerAccountEmail" class="account-email"></div>
-    <button id="logoutButton" class="logout hidden" onclick="logout()">
-      Log out
-    </button>
-  </div>
+<div class="logo">Price<span>Drop</span></div>
+<div class="header-actions">
+<div id="headerAccountEmail" class="account-email"></div>
+<button id="logoutButton" class="logout hidden" onclick="logout()">Log out</button>
+</div>
 </header>
 
 <main class="container">
 
-<!-- LOGIN -->
-
 <section id="loginScreen">
-
-  <div class="hero">
-    <h1>Never miss a price drop.</h1>
-    <p>
-      Sign in to track products and get notified when prices fall.
-    </p>
-  </div>
-
-  <div class="card">
-
-    <div id="loginError" class="error hidden"></div>
-
-    <label>Email address</label>
-    <input
-      id="loginEmail"
-      type="email"
-      placeholder="you@example.com"
-      autocomplete="email"
-    >
-
-    <label>Password</label>
-    <input
-      id="loginPassword"
-      type="password"
-      placeholder="Password"
-      autocomplete="current-password"
-    >
-
-    <button class="primary" onclick="login()">
-      Log in
-    </button>
-
-    <div class="auth-switch">
-      Don't have an account?
-      <button class="link-button" onclick="showSignup()">
-        Create one
-      </button>
-    </div>
-
-    <div class="auth-note">
-      <button class="link-button" onclick="showForgotPassword()">
-        Forgot your password?
-      </button>
-    </div>
-
-  </div>
-
+<div class="hero">
+<h1>Never miss a price drop.</h1>
+<p>Sign in to track products and get notified when prices fall.</p>
+</div>
+<div class="card">
+<div id="loginError" class="error hidden"></div>
+<label>Email address</label>
+<input id="loginEmail" type="email" placeholder="you@example.com" autocomplete="email">
+<label>Password</label>
+<input id="loginPassword" type="password" placeholder="Password" autocomplete="current-password">
+<button class="primary" onclick="login()">Log in</button>
+<div class="auth-switch">
+Don't have an account?
+<button class="link-button" onclick="showSignup()">Create one</button>
+</div>
+<div class="auth-note">
+<button class="link-button" onclick="showForgotPassword()">Forgot your password?</button>
+</div>
+</div>
 </section>
-
-
-<!-- SIGN UP -->
 
 <section id="signupScreen" class="hidden">
-
-  <div class="hero">
-    <h1>Create your account.</h1>
-    <p>
-      Set up your PriceDrop account to start tracking products.
-    </p>
-  </div>
-
-  <div class="card">
-
-    <div id="signupError" class="error hidden"></div>
-
-    <label>Email address</label>
-    <input
-      id="signupEmail"
-      type="email"
-      placeholder="you@example.com"
-      autocomplete="email"
-    >
-
-    <label>Password</label>
-    <input
-      id="signupPassword"
-      type="password"
-      placeholder="Choose a password"
-      autocomplete="new-password"
-    >
-
-    <button class="primary" onclick="signup()">
-      Create account
-    </button>
-
-    <div class="auth-switch">
-      Already have an account?
-      <button class="link-button" onclick="showLogin()">
-        Log in
-      </button>
-    </div>
-
-  </div>
-
+<div class="hero">
+<h1>Create your account.</h1>
+<p>Set up your PriceDrop account to start tracking products.</p>
+</div>
+<div class="card">
+<div id="signupError" class="error hidden"></div>
+<label>Email address</label>
+<input id="signupEmail" type="email" placeholder="you@example.com" autocomplete="email">
+<label>Password</label>
+<input id="signupPassword" type="password" placeholder="Choose a password" autocomplete="new-password">
+<button class="primary" onclick="signup()">Create account</button>
+<div class="auth-switch">
+Already have an account?
+<button class="link-button" onclick="showLogin()">Log in</button>
+</div>
+</div>
 </section>
-
-
-<!-- FORGOT PASSWORD -->
 
 <section id="forgotScreen" class="hidden">
-
-  <div class="hero">
-    <h1>Reset your password.</h1>
-    <p>
-      Enter your email address and we'll send you a password reset link.
-    </p>
-  </div>
-
-  <div class="card">
-
-    <div id="forgotError" class="error hidden"></div>
-
-    <div id="forgotSuccess" class="success hidden"></div>
-
-    <label>Email address</label>
-
-    <input
-      id="forgotEmail"
-      type="email"
-      placeholder="you@example.com"
-      autocomplete="email"
-    >
-
-    <button class="primary" onclick="sendPasswordReset()">
-      Send reset link
-    </button>
-
-    <div class="auth-switch">
-      <button class="link-button" onclick="showLogin()">
-        Back to login
-      </button>
-    </div>
-
-  </div>
-
+<div class="hero">
+<h1>Reset your password.</h1>
+<p>Enter your email address and we'll send you a password reset link.</p>
+</div>
+<div class="card">
+<div id="forgotError" class="error hidden"></div>
+<div id="forgotSuccess" class="success hidden"></div>
+<label>Email address</label>
+<input id="forgotEmail" type="email" placeholder="you@example.com" autocomplete="email">
+<button class="primary" onclick="sendPasswordReset()">Send reset link</button>
+<div class="auth-switch">
+<button class="link-button" onclick="showLogin()">Back to login</button>
+</div>
+</div>
 </section>
-
-
-<!-- DASHBOARD -->
 
 <section id="dashboardScreen" class="hidden">
+<div class="dashboard-header">
+<div>
+<h1>Your tracked products</h1>
+<p>We'll monitor these products for price drops.</p>
+</div>
+<div class="dashboard-actions">
+<button class="secondary" onclick="loadDashboard()">Refresh</button>
+<button class="secondary" onclick="showHome()">Track a product</button>
+</div>
+</div>
 
-  <div class="dashboard-header">
+<div id="dashboardMessage" class="dashboard-message"></div>
 
-    <div>
-      <h1>Your tracked products</h1>
-      <p>We'll monitor these products for price drops.</p>
-    </div>
+<div id="deleteConfirmation" class="confirm-delete hidden">
+<div>Are you sure you want to stop tracking this product?</div>
+<div class="confirm-delete-actions">
+<button class="cancel" onclick="cancelDelete()">Cancel</button>
+<button class="confirm" onclick="confirmDelete()">Delete</button>
+</div>
+</div>
 
-    <div class="dashboard-actions">
-      <button class="secondary" onclick="loadDashboard()">
-        Refresh
-      </button>
-
-      <button class="secondary" onclick="showHome()">
-        Track a product
-      </button>
-    </div>
-
-  </div>
-
-  <div id="dashboardMessage" class="dashboard-message"></div>
-
-  <div id="deleteConfirmation" class="confirm-delete hidden">
-    <div>
-      Are you sure you want to stop tracking this product?
-    </div>
-
-    <div class="confirm-delete-actions">
-      <button class="cancel" onclick="cancelDelete()">
-        Cancel
-      </button>
-
-      <button class="confirm" onclick="confirmDelete()">
-        Delete
-      </button>
-    </div>
-  </div>
-
-  <div id="trackedProductsList" class="tracked-list"></div>
-
+<div id="trackedProductsList" class="tracked-list"></div>
 </section>
-
-
-<!-- HOME / NEW PRODUCT -->
 
 <section id="homeScreen" class="hidden">
-
-  <div class="hero">
-    <h1>Never miss a price drop.</h1>
-    <p>
-      Give us the exact product link and we'll find the current price for you.
-    </p>
-  </div>
-
-  <div class="card">
-
-    <div class="account-info" id="accountInfo"></div>
-
-    <div id="homeError" class="error hidden"></div>
-
-    <label>What are you looking for?</label>
-
-    <input
-      id="productName"
-      placeholder="e.g. Garmin Fenix 8"
-    >
-
-    <label>Product URL</label>
-
-    <input
-      id="productUrl"
-      type="url"
-      placeholder="https://www.example.com/product..."
-    >
-
-    <button class="primary" onclick="inspectProduct()">
-      Find Product
-    </button>
-
-    <br><br>
-
-    <button class="secondary" onclick="showDashboard()">
-      Back to Dashboard
-    </button>
-
-  </div>
-
+<div class="hero">
+<h1>Never miss a price drop.</h1>
+<p>Give us the exact product link and we'll find the current price for you.</p>
+</div>
+<div class="card">
+<div class="account-info" id="accountInfo"></div>
+<div id="homeError" class="error hidden"></div>
+<label>What are you looking for?</label>
+<input id="productName" placeholder="e.g. Garmin Fenix 8">
+<label>Product URL</label>
+<input id="productUrl" type="url" placeholder="https://www.example.com/product...">
+<button class="primary" onclick="inspectProduct()">Find Product</button>
+<br><br>
+<button class="secondary" onclick="showDashboard()">Back to Dashboard</button>
+</div>
 </section>
-
-
-<!-- LOADING -->
 
 <section id="loadingScreen" class="hidden">
-
-  <div class="card loading">
-
-    <div class="spinner"></div>
-
-    <h2>Finding your product...</h2>
-
-    <p>
-      We're checking the product page for the current price and product details.
-    </p>
-
-  </div>
-
+<div class="card loading">
+<div class="spinner"></div>
+<h2>Finding your product...</h2>
+<p>We're checking the product page for the current price and product details.</p>
+</div>
 </section>
-
-
-<!-- PRODUCT -->
 
 <section id="productScreen" class="hidden">
+<div class="card">
+<div id="productError" class="error hidden"></div>
+<img id="productImage" class="product-image hidden" alt="Product">
+<div id="foundProductName" class="product-name"></div>
+<div id="foundRetailer" class="retailer"></div>
+<div id="foundPrice" class="price"></div>
 
-  <div class="card">
+<div class="target-box">
+<label>Alert me when the price reaches</label>
+<input id="targetPrice" type="number" min="0" step="0.01" placeholder="Target price">
+</div>
 
-    <div id="productError" class="error hidden"></div>
-
-    <img
-      id="productImage"
-      class="product-image hidden"
-      alt="Product"
-    >
-
-    <div id="foundProductName" class="product-name"></div>
-
-    <div id="foundRetailer" class="retailer"></div>
-
-    <div id="foundPrice" class="price"></div>
-
-    <div class="target-box">
-
-      <label>
-        Alert me when the price reaches
-      </label>
-
-      <input
-        id="targetPrice"
-        type="number"
-        min="0"
-        step="0.01"
-        placeholder="Target price"
-      >
-
-    </div>
-
-    <button
-      id="startTrackingButton"
-      class="primary"
-      onclick="startTracking()"
-    >
-      Start Tracking
-    </button>
-
-    <br><br>
-
-    <button class="secondary" onclick="showHome()">
-      Start Again
-    </button>
-
-  </div>
-
+<button id="startTrackingButton" class="primary" onclick="startTracking()">Start Tracking</button>
+<br><br>
+<button class="secondary" onclick="showHome()">Start Again</button>
+</div>
 </section>
-
-
-<!-- TRACKING CONFIRMATION -->
 
 <section id="trackingScreen" class="hidden">
-
-  <div class="card">
-
-    <div class="success">
-
-      <strong>You're tracking it.</strong>
-
-      <br><br>
-
-      PriceDrop has saved this product to your account.
-
-    </div>
-
-    <div id="trackingSummary"></div>
-
-    <br>
-
-    <button class="primary" onclick="showDashboard()">
-      View My Dashboard
-    </button>
-
-  </div>
-
+<div class="card">
+<div class="success">
+<strong>You're tracking it.</strong>
+<br><br>
+PriceDrop has saved this product to your account.
+</div>
+<div id="trackingSummary"></div>
+<br>
+<button class="primary" onclick="showDashboard()">View My Dashboard</button>
+</div>
 </section>
 
-
-<!-- GENERIC LOADING -->
-
 <section id="dashboardLoadingScreen" class="hidden">
-
-  <div class="card loading">
-
-    <div class="spinner"></div>
-
-    <h2>Loading your products...</h2>
-
-    <p>
-      Please wait.
-    </p>
-
-  </div>
-
+<div class="card loading">
+<div class="spinner"></div>
+<h2>Loading your products...</h2>
+<p>Please wait.</p>
+</div>
 </section>
 
 </main>
 
-
 <script>
+const SUPABASE_URL="https://hqoxpnftbikqyeqhfrft.supabase.co";
+const SUPABASE_KEY="sb_publishable_VunRgU8lX_s9ig17fXpYeQ_dk8jsmas";
+const supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+const API_BASE="https://price-drop-api.kev-flanigan.workers.dev";
 
-const SUPABASE_URL =
-"https://hqoxpnftbikqyeqhfrft.supabase.co";
-
-const SUPABASE_KEY =
-"sb_publishable_VunRgU8lX_s9ig17fXpYeQ_dk8jsmas";
-
-const supabaseClient =
-window.supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_KEY
-);
-
-const API_BASE =
-"https://price-drop-api.kev-flanigan.workers.dev";
-
-let inspectedProduct = null;
-let productPendingDelete = null;
-
-
-/* -------------------------
-   SCREEN MANAGEMENT
-------------------------- */
+let inspectedProduct=null;
+let productPendingDelete=null;
+let dashboardLoadId=0;
+let initialised=false;
 
 function hideAllScreens(){
-
-  [
-    "loginScreen",
-    "signupScreen",
-    "forgotScreen",
-    "dashboardScreen",
-    "homeScreen",
-    "loadingScreen",
-    "productScreen",
-    "trackingScreen",
-    "dashboardLoadingScreen"
-  ].forEach(id => {
-
-    const element =
-      document.getElementById(id);
-
-    if(element){
-      element.classList.add("hidden");
-    }
-
-  });
-
+[
+"loginScreen",
+"signupScreen",
+"forgotScreen",
+"dashboardScreen",
+"homeScreen",
+"loadingScreen",
+"productScreen",
+"trackingScreen",
+"dashboardLoadingScreen"
+].forEach(id=>{
+const element=document.getElementById(id);
+if(element) element.classList.add("hidden");
+});
 }
-
 
 function showLogin(){
-
-  hideAllScreens();
-
-  document
-    .getElementById("loginScreen")
-    .classList.remove("hidden");
-
+hideAllScreens();
+document.getElementById("loginScreen").classList.remove("hidden");
 }
-
 
 function showSignup(){
-
-  hideAllScreens();
-
-  document
-    .getElementById("signupScreen")
-    .classList.remove("hidden");
-
+hideAllScreens();
+document.getElementById("signupScreen").classList.remove("hidden");
 }
-
 
 function showForgotPassword(){
-
-  hideAllScreens();
-
-  document
-    .getElementById("forgotScreen")
-    .classList.remove("hidden");
-
+hideAllScreens();
+document.getElementById("forgotScreen").classList.remove("hidden");
 }
-
 
 function showHome(){
-
-  hideAllScreens();
-
-  document
-    .getElementById("homeScreen")
-    .classList.remove("hidden");
-
+hideAllScreens();
+document.getElementById("homeScreen").classList.remove("hidden");
 }
-
 
 async function showDashboard(){
-
-  hideAllScreens();
-
-  document
-    .getElementById("dashboardLoadingScreen")
-    .classList.remove("hidden");
-
-  await loadDashboard();
-
+hideAllScreens();
+document.getElementById("dashboardLoadingScreen").classList.remove("hidden");
+await loadDashboard();
 }
-
 
 async function showLoggedInUI(){
+document.getElementById("logoutButton").classList.remove("hidden");
 
-  document
-    .getElementById("logoutButton")
-    .classList.remove("hidden");
+const {data}=await supabaseClient.auth.getUser();
 
-  const {
-    data
-  } =
-    await supabaseClient.auth.getUser();
-
-  if(!data.user){
-    showLogin();
-    return;
-  }
-
-  const email =
-    data.user.email || "";
-
-  document
-    .getElementById("accountInfo")
-    .textContent =
-      "Signed in as " + email;
-
-  document
-    .getElementById("headerAccountEmail")
-    .textContent =
-      email;
-
-  await showDashboard();
-
+if(!data.user){
+showLogin();
+return;
 }
 
+const email=data.user.email||"";
 
-/* -------------------------
-   AUTHENTICATION
-------------------------- */
+document.getElementById("accountInfo").textContent="Signed in as "+email;
+document.getElementById("headerAccountEmail").textContent=email;
+
+await showDashboard();
+}
 
 async function login(){
+const email=document.getElementById("loginEmail").value.trim();
+const password=document.getElementById("loginPassword").value;
+const error=document.getElementById("loginError");
 
-  const email =
-    document
-      .getElementById("loginEmail")
-      .value
-      .trim();
+error.classList.add("hidden");
 
-  const password =
-    document
-      .getElementById("loginPassword")
-      .value;
-
-  const error =
-    document
-      .getElementById("loginError");
-
-  error.classList.add("hidden");
-
-  if(!email || !password){
-
-    error.textContent =
-      "Please enter your email address and password.";
-
-    error.classList.remove("hidden");
-
-    return;
-  }
-
-  const {
-    data,
-    error: authError
-  } =
-    await supabaseClient.auth.signInWithPassword({
-      email,
-      password
-    });
-
-  if(authError){
-
-    error.textContent =
-      authError.message;
-
-    error.classList.remove("hidden");
-
-    return;
-  }
-
-  if(data.session){
-    await showLoggedInUI();
-  }
-
+if(!email||!password){
+error.textContent="Please enter your email address and password.";
+error.classList.remove("hidden");
+return;
 }
 
+const {data,error:authError}=await supabaseClient.auth.signInWithPassword({email,password});
+
+if(authError){
+error.textContent=authError.message;
+error.classList.remove("hidden");
+return;
+}
+
+if(data.session) await showLoggedInUI();
+}
 
 async function signup(){
+const email=document.getElementById("signupEmail").value.trim();
+const password=document.getElementById("signupPassword").value;
+const error=document.getElementById("signupError");
 
-  const email =
-    document
-      .getElementById("signupEmail")
-      .value
-      .trim();
+error.classList.add("hidden");
 
-  const password =
-    document
-      .getElementById("signupPassword")
-      .value;
-
-  const error =
-    document
-      .getElementById("signupError");
-
-  error.classList.add("hidden");
-
-  if(!email || !password){
-
-    error.textContent =
-      "Please enter your email address and password.";
-
-    error.classList.remove("hidden");
-
-    return;
-  }
-
-  if(password.length < 8){
-
-    error.textContent =
-      "Password must be at least 8 characters.";
-
-    error.classList.remove("hidden");
-
-    return;
-  }
-
-  const {
-    data,
-    error: authError
-  } =
-    await supabaseClient.auth.signUp({
-      email,
-      password
-    });
-
-  if(authError){
-
-    error.textContent =
-      authError.message;
-
-    error.classList.remove("hidden");
-
-    return;
-  }
-
-  if(data.user && !data.session){
-
-    error.textContent =
-      "Account created. Please check your email to verify your account.";
-
-    error.classList.remove("hidden");
-
-    return;
-  }
-
-  if(data.session){
-    await showLoggedInUI();
-  }
-
+if(!email||!password){
+error.textContent="Please enter your email address and password.";
+error.classList.remove("hidden");
+return;
 }
 
+if(password.length<8){
+error.textContent="Password must be at least 8 characters.";
+error.classList.remove("hidden");
+return;
+}
+
+const {data,error:authError}=await supabaseClient.auth.signUp({email,password});
+
+if(authError){
+error.textContent=authError.message;
+error.classList.remove("hidden");
+return;
+}
+
+if(data.user&&!data.session){
+error.textContent="Account created. Please check your email to verify your account.";
+error.classList.remove("hidden");
+return;
+}
+
+if(data.session) await showLoggedInUI();
+}
 
 async function logout(){
-
-  await supabaseClient.auth.signOut();
-
-  inspectedProduct = null;
-  productPendingDelete = null;
-
-  document
-    .getElementById("logoutButton")
-    .classList.add("hidden");
-
-  document
-    .getElementById("headerAccountEmail")
-    .textContent = "";
-
-  showLogin();
-
+await supabaseClient.auth.signOut();
+inspectedProduct=null;
+productPendingDelete=null;
+document.getElementById("logoutButton").classList.add("hidden");
+document.getElementById("headerAccountEmail").textContent="";
+showLogin();
 }
-
 
 async function sendPasswordReset(){
+const email=document.getElementById("forgotEmail").value.trim();
+const error=document.getElementById("forgotError");
+const success=document.getElementById("forgotSuccess");
 
-  const email =
-    document
-      .getElementById("forgotEmail")
-      .value
-      .trim();
+error.classList.add("hidden");
+success.classList.add("hidden");
 
-  const error =
-    document
-      .getElementById("forgotError");
-
-  const success =
-    document
-      .getElementById("forgotSuccess");
-
-  error.classList.add("hidden");
-  success.classList.add("hidden");
-
-  if(!email){
-
-    error.textContent =
-      "Please enter your email address.";
-
-    error.classList.remove("hidden");
-
-    return;
-  }
-
-  const {
-    error: resetError
-  } =
-    await supabaseClient.auth.resetPasswordForEmail(
-      email,
-      {
-        redirectTo:
-          "https://price-drop.pages.dev/"
-      }
-    );
-
-  if(resetError){
-
-    error.textContent =
-      resetError.message;
-
-    error.classList.remove("hidden");
-
-    return;
-  }
-
-  success.textContent =
-    "If an account exists for that email address, a password reset email has been sent.";
-
-  success.classList.remove("hidden");
-
+if(!email){
+error.textContent="Please enter your email address.";
+error.classList.remove("hidden");
+return;
 }
 
-
-/* -------------------------
-   DASHBOARD
-------------------------- */
-
-async function loadDashboard(){
-
-  hideAllScreens();
-
-  const dashboard =
-    document.getElementById("dashboardScreen");
-
-  const list =
-    document.getElementById("trackedProductsList");
-
-  const message =
-    document.getElementById("dashboardMessage");
-
-  message.innerHTML = "";
-
-  list.innerHTML = "";
-
-  const {
-    data: userData,
-    error: userError
-  } =
-    await supabaseClient.auth.getUser();
-
-  if(userError || !userData.user){
-
-    showLogin();
-    return;
-  }
-
-  dashboard.classList.remove("hidden");
-
-  const {
-    data: products,
-    error
-  } =
-    await supabaseClient
-      .from("tracked_products")
-      .select("*")
-      .order(
-        "created_at",
-        {
-          ascending:false
-        }
-      );
-
-  if(error){
-
-    console.error(error);
-
-    message.innerHTML =
-      '<div class="error">Unable to load your tracked products. Please try again.</div>';
-
-    return;
-  }
-
-  if(!products || products.length === 0){
-
-    list.innerHTML = `
-      <div class="card empty-state">
-        <h2>You're not tracking anything yet.</h2>
-        <p>
-          Add a product and we'll save it here for you.
-        </p>
-        <button
-          class="primary"
-          onclick="showHome()"
-        >
-          Track Your First Product
-        </button>
-      </div>
-    `;
-
-    return;
-  }
-
-  products.forEach(product => {
-
-    const card =
-      createTrackedProductCard(product);
-
-    list.appendChild(card);
-
-  });
-
-}
-
-unction createTrackedProductCard(product){
-  const card =
-    document.createElement("div");
-
-  card.className =
-    "tracked-card";
-
-  const top =
-    document.createElement("div");
-
-  top.className =
-    "tracked-top";
-
-  const titleArea =
-    document.createElement("div");
-
-  const name =
-    document.createElement("div");
-
-  name.className =
-    "tracked-name";
-
-  name.textContent =
-    product.product_name ||
-    "Unknown product";
-
-  const retailer =
-    document.createElement("div");
-
-  retailer.className =
-    "tracked-retailer";
-
-  retailer.textContent =
-    product.retailer ||
-    "Unknown retailer";
-
-  titleArea.appendChild(name);
-  titleArea.appendChild(retailer);
-
-  const status =
-    document.createElement("span");
-
-  status.className =
-    "status";
-
-  status.textContent =
-    product.status === "active"
-      ? "Tracking"
-      : product.status || "Unknown";
-
-  top.appendChild(titleArea);
-  top.appendChild(status);
-
-  card.appendChild(top);
-
-  const prices =
-    document.createElement("div");
-
-  prices.className =
-    "tracked-prices";
-
-  const currentBox =
-    document.createElement("div");
-
-  currentBox.className =
-    "price-box";
-
-  const currentLabel =
-    document.createElement("div");
-
-  currentLabel.className =
-    "price-label";
-
-  currentLabel.textContent =
-    "Current price";
-
-  const currentValue =
-    document.createElement("div");
-
-  currentValue.className =
-    "price-value";
-
-  currentValue.textContent =
-    formatPrice(
-      product.current_price,
-      product.currency
-    );
-
-  currentBox.appendChild(currentLabel);
-  currentBox.appendChild(currentValue);
-
-  const targetBox =
-    document.createElement("div");
-
-  targetBox.className =
-    "price-box";
-
-  const targetLabel =
-    document.createElement("div");
-
-  targetLabel.className =
-    "price-label";
-
-  targetLabel.textContent =
-    "Target price";
-
-  const targetValue =
-    document.createElement("div");
-
-  targetValue.className =
-    "price-value";
-
-  targetValue.textContent =
-    formatPrice(
-      product.target_price,
-      product.currency
-    );
-
-  targetBox.appendChild(targetLabel);
-  targetBox.appendChild(targetValue);
-
-  prices.appendChild(currentBox);
-  prices.appendChild(targetBox);
-
-  card.appendChild(prices);
-
-  const historyId =
-    `history-${product.id}`;
-
-  const history =
-    document.createElement("div");
-
-  history.id =
-    historyId;
-
-  history.className =
-    "price-history hidden";
-
-  card.appendChild(history);
-
-  const historyButton =
-    document.createElement("button");
-
-  historyButton.className =
-    "secondary history-toggle";
-
-  historyButton.textContent =
-    "View Price History";
-
-  historyButton.onclick =
-    function(){
-      togglePriceHistory(
-        product.id,
-        historyId
-      );
-
-      historyButton.textContent =
-        history.classList.contains("hidden")
-          ? "View Price History"
-          : "Hide Price History";
-    };
-
-  card.appendChild(historyButton);
-
-  const actions =
-    document.createElement("div");
-
-  actions.className =
-    "tracked-actions";
-
-  const view =
-    document.createElement("a");
-
-  view.className =
-    "view";
-
-  view.textContent =
-    "View Product";
-
-  view.href =
-    product.product_url;
-
-  view.target =
-    "_blank";
-
-  view.rel =
-    "noopener noreferrer";
-
-  const deleteButton =
-    document.createElement("button");
-
-  deleteButton.className =
-    "danger";
-
-  deleteButton.textContent =
-    "Delete Tracking";
-
-  deleteButton.onclick =
-    function(){
-      requestDelete(product.id);
-    };
-
-  actions.appendChild(view);
-  actions.appendChild(deleteButton);
-
-  card.appendChild(actions);
-
-  return card;
-}
-async function togglePriceHistory(productId, containerId){
-  const container =
-    document.getElementById(containerId);
-
-  if(!container){
-    return;
-  }
-
-  if(!container.classList.contains("hidden")){
-    container.classList.add("hidden");
-    return;
-  }
-
-  container.classList.remove("hidden");
-
-  container.innerHTML = `
-    <div class="history-loading">
-      Loading price history...
-    </div>
-  `;
-
-  const {
-    data,
-    error
-  } =
-  await supabaseClient
-    .from("price_history")
-    .select("price,recorded_at")
-    .eq("tracked_product_id", productId)
-    .order("recorded_at", {
-      ascending:true
-    });
-
-  if(error){
-    console.error(error);
-
-    container.innerHTML = `
-      <div class="history-error">
-        Unable to load price history.
-      </div>
-    `;
-
-    return;
-  }
-
-  if(!data || data.length === 0){
-    container.innerHTML = `
-      <div class="history-loading">
-        No price history has been recorded yet.
-      </div>
-    `;
-
-    return;
-  }
-
-  const prices =
-    data
-      .map(row => Number(row.price))
-      .filter(price => Number.isFinite(price));
-
-  const lowestPrice =
-    Math.min(...prices);
-
-  const latestPrice =
-    prices[prices.length - 1];
-
-  const summary = document.createElement("div");
-  summary.className = "history-summary";
-
-  const currentStat =
-    document.createElement("div");
-  currentStat.className = "history-stat";
-
-  currentStat.innerHTML = `
-    <div class="history-stat-label">
-      Current price
-    </div>
-    <div class="history-stat-value">
-      ${formatPrice(latestPrice)}
-    </div>
-  `;
-
-  const lowestStat =
-    document.createElement("div");
-  lowestStat.className = "history-stat";
-
-  lowestStat.innerHTML = `
-    <div class="history-stat-label">
-      Lowest recorded
-    </div>
-    <div class="history-stat-value">
-      ${formatPrice(lowestPrice)}
-    </div>
-  `;
-
-  summary.appendChild(currentStat);
-  summary.appendChild(lowestStat);
-
-  const chart =
-    createPriceHistoryChart(data);
-
-  const historyList =
-    document.createElement("div");
-  historyList.className =
-    "history-list";
-
-  [...data]
-    .reverse()
-    .forEach(row => {
-      const rowElement =
-        document.createElement("div");
-
-      rowElement.className =
-        "history-row";
-
-      const date =
-        document.createElement("div");
-
-      date.className =
-        "history-date";
-
-      date.textContent =
-        new Date(row.recorded_at)
-          .toLocaleString(
-            "en-GB",
-            {
-              day:"numeric",
-              month:"short",
-              year:"numeric",
-              hour:"2-digit",
-              minute:"2-digit"
-            }
-          );
-
-      const price =
-        document.createElement("div");
-
-      price.className =
-        "history-price";
-
-      price.textContent =
-        formatPrice(row.price);
-
-      rowElement.appendChild(date);
-      rowElement.appendChild(price);
-
-      historyList.appendChild(rowElement);
-    });
-
-  container.innerHTML = "";
-  container.appendChild(summary);
-  container.appendChild(chart);
-  container.appendChild(historyList);
-}
-
-function createPriceHistoryChart(data){
-  const wrapper =
-    document.createElement("div");
-
-  wrapper.className =
-    "history-chart";
-
-  const width = 700;
-  const height = 190;
-  const padding = 25;
-
-  const prices =
-    data
-      .map(row => Number(row.price))
-      .filter(price => Number.isFinite(price));
-
-  const minPrice =
-    Math.min(...prices);
-
-  const maxPrice =
-    Math.max(...prices);
-
-  const range =
-    maxPrice === minPrice
-      ? 1
-      : maxPrice - minPrice;
-
-  const points =
-    data.map((row,index) => {
-      const price =
-        Number(row.price);
-
-      const x =
-        data.length === 1
-          ? width / 2
-          : padding +
-            (
-              index /
-              (data.length - 1)
-            ) *
-            (width - padding * 2);
-
-      const y =
-        height -
-        padding -
-        (
-          (price - minPrice) /
-          range
-        ) *
-        (height - padding * 2);
-
-      return {
-        x,
-        y,
-        price
-      };
-    });
-
-  const path =
-    points
-      .map((point,index) =>
-        `${index === 0 ? "M" : "L"} ${point.x} ${point.y}`
-      )
-      .join(" ");
-
-  const circles =
-    points
-      .map(point =>
-        `<circle
-          class="history-point"
-          cx="${point.x}"
-          cy="${point.y}"
-          r="5"
-        ></circle>`
-      )
-      .join("");
-
-  wrapper.innerHTML = `
-    <svg
-      viewBox="0 0 ${width} ${height}"
-      preserveAspectRatio="none"
-      aria-label="Price history chart"
-    >
-      <path
-        class="history-line"
-        d="${path}"
-      ></path>
-      ${circles}
-    </svg>
-  `;
-
-  return wrapper;
-}
-
-/* -------------------------
-   DELETE TRACKING
-------------------------- */
-
-function requestDelete(productId){
-
-  productPendingDelete =
-    productId;
-
-  document
-    .getElementById("deleteConfirmation")
-    .classList.remove("hidden");
-
-}
-
-
-function cancelDelete(){
-
-  productPendingDelete =
-    null;
-
-  document
-    .getElementById("deleteConfirmation")
-    .classList.add("hidden");
-
-}
-
-
-async function confirmDelete(){
-
-  if(!productPendingDelete){
-    return;
-  }
-
-  const id =
-    productPendingDelete;
-
-  const {
-    error
-  } =
-    await supabaseClient
-      .from("tracked_products")
-      .delete()
-      .eq("id", id);
-
-  if(error){
-
-    console.error(error);
-
-    document
-      .getElementById("dashboardMessage")
-      .innerHTML =
-        '<div class="error">Unable to delete this product. Please try again.</div>';
-
-    cancelDelete();
-
-    return;
-  }
-
-  cancelDelete();
-
-  await loadDashboard();
-
-}
-
-
-/* -------------------------
-   PRODUCT LOOKUP
-------------------------- */
-
-async function inspectProduct(){
-
-  const name =
-    document
-      .getElementById("productName")
-      .value
-      .trim();
-
-  const url =
-    document
-      .getElementById("productUrl")
-      .value
-      .trim();
-
-  const error =
-    document
-      .getElementById("homeError");
-
-  error.classList.add("hidden");
-
-  if(!name){
-
-    return showHomeError(
-      "Please enter the product you are looking for."
-    );
-
-  }
-
-  if(!url || !isValidUrl(url)){
-
-    return showHomeError(
-      "Please enter a valid product URL."
-    );
-
-  }
-
-  hideAllScreens();
-
-  document
-    .getElementById("loadingScreen")
-    .classList.remove("hidden");
-
-  try{
-
-    const response =
-      await fetch(
-        API_BASE +
-        "/api/product/inspect",
-        {
-          method:"POST",
-          headers:{
-            "Content-Type":"application/json"
-          },
-          body:JSON.stringify({
-            productName:name,
-            url:url
-          })
-        }
-      );
-
-    const product =
-      await response.json();
-
-    if(!response.ok){
-
-      throw new Error(
-        product.error ||
-        "Unable to inspect product."
-      );
-
-    }
-
-    if(typeof product.price !== "number"){
-
-      throw new Error(
-        "The product page did not return a valid price."
-      );
-
-    }
-
-    inspectedProduct =
-      product;
-
-    displayProduct(product);
-
-  }catch(err){
-
-    hideAllScreens();
-
-    document
-      .getElementById("homeScreen")
-      .classList.remove("hidden");
-
-    showHomeError(
-      err.message ||
-      "We couldn't retrieve the live product details."
-    );
-
-  }
-
-}
-
-
-function displayProduct(product){
-
-  hideAllScreens();
-
-  document
-    .getElementById("productScreen")
-    .classList.remove("hidden");
-
-  document
-    .getElementById("foundProductName")
-    .textContent =
-      product.productName ||
-      "Unknown product";
-
-  document
-    .getElementById("foundRetailer")
-    .textContent =
-      product.retailer ||
-      "Unknown retailer";
-
-  document
-    .getElementById("foundPrice")
-    .textContent =
-      formatPrice(
-        product.price,
-        product.currency
-      );
-
-  const image =
-    document.getElementById("productImage");
-
-  if(product.image){
-
-    image.src =
-      product.image;
-
-    image.classList.remove("hidden");
-
-  }else{
-
-    image.classList.add("hidden");
-
-  }
-
-  const suggestedTarget =
-    product.price * 0.85;
-
-  document
-    .getElementById("targetPrice")
-    .value =
-      suggestedTarget.toFixed(2);
-
-}
-
-
-/* -------------------------
-   SAVE TRACKING
-------------------------- */
-
-async function startTracking(){
-
-  const target =
-    parseFloat(
-      document
-        .getElementById("targetPrice")
-        .value
-    );
-
-  const error =
-    document
-      .getElementById("productError");
-
-  const button =
-    document
-      .getElementById("startTrackingButton");
-
-  error.classList.add("hidden");
-
-  if(!inspectedProduct){
-
-    error.textContent =
-      "Product information is missing.";
-
-    error.classList.remove("hidden");
-
-    return;
-  }
-
-  if(!target || target <= 0){
-
-    error.textContent =
-      "Please enter a valid target price.";
-
-    error.classList.remove("hidden");
-
-    return;
-  }
-
-  if(target >= inspectedProduct.price){
-
-    error.textContent =
-      "Your target price should be below the current price.";
-
-    error.classList.remove("hidden");
-
-    return;
-  }
-
-  const {
-    data: userData,
-    error: userError
-  } =
-    await supabaseClient.auth.getUser();
-
-  if(userError || !userData.user){
-
-    error.textContent =
-      "Your session has expired. Please log in again.";
-
-    error.classList.remove("hidden");
-
-    return;
-  }
-
-  button.disabled =
-    true;
-
-  button.textContent =
-    "Saving...";
-
-  const {
-    error: saveError
-  } =
-    await supabaseClient
-      .from("tracked_products")
-      .insert({
-        user_id:userData.user.id,
-        product_name:
-          inspectedProduct.productName,
-        product_url:
-          inspectedProduct.url,
-        retailer:
-          inspectedProduct.retailer ||
-          null,
-        current_price:
-          inspectedProduct.price,
-        target_price:
-          target,
-        currency:
-          inspectedProduct.currency ||
-          "GBP",
-        status:"active"
-      });
-
-  button.disabled =
-    false;
-
-  button.textContent =
-    "Start Tracking";
-
-  if(saveError){
-
-    console.error(saveError);
-
-    error.textContent =
-      "Unable to save this product. Please try again.";
-
-    error.classList.remove("hidden");
-
-    return;
-  }
-
-  document
-    .getElementById("trackingSummary")
-    .innerHTML = "";
-
-  const summary =
-    document
-      .getElementById("trackingSummary");
-
-  const name =
-    document.createElement("p");
-
-  const nameStrong =
-    document.createElement("strong");
-
-  nameStrong.textContent =
-    inspectedProduct.productName;
-
-  name.appendChild(nameStrong);
-
-
-  const retailer =
-    document.createElement("p");
-
-  retailer.textContent =
-    inspectedProduct.retailer ||
-    "";
-
-
-  const current =
-    document.createElement("p");
-
-  current.textContent =
-    "Current price: ";
-
-  const currentStrong =
-    document.createElement("strong");
-
-  currentStrong.textContent =
-    formatPrice(
-      inspectedProduct.price,
-      inspectedProduct.currency
-    );
-
-  current.appendChild(currentStrong);
-
-
-  const targetElement =
-    document.createElement("p");
-
-  targetElement.textContent =
-    "Target price: ";
-
-  const targetStrong =
-    document.createElement("strong");
-
-  targetStrong.textContent =
-    formatPrice(
-      target,
-      inspectedProduct.currency
-    );
-
-  targetElement.appendChild(targetStrong);
-
-
-  summary.appendChild(name);
-  summary.appendChild(retailer);
-  summary.appendChild(current);
-  summary.appendChild(targetElement);
-
-
-  await showDashboard();
-
-}
-
-
-/* -------------------------
-   HELPERS
-------------------------- */
-
-function formatPrice(
-  price,
-  currency="GBP"
-){
-
-  try{
-
-    return new Intl.NumberFormat(
-      "en-GB",
-      {
-        style:"currency",
-        currency:currency || "GBP"
-      }
-    ).format(price);
-
-  }catch{
-
-    return "£" +
-      Number(price).toFixed(2);
-
-  }
-
-}
-
-
-function isValidUrl(value){
-
-  try{
-
-    const url =
-      new URL(value);
-
-    return (
-      url.protocol === "http:" ||
-      url.protocol === "https:"
-    );
-
-  }catch{
-
-    return false;
-
-  }
-
-}
-
-
-function showHomeError(message){
-
-  const error =
-    document
-      .getElementById("homeError");
-
-  error.textContent =
-    message;
-
-  error.classList.remove("hidden");
-
-}
-
-
-/* -------------------------
-   STARTUP
-------------------------- */
-
-let dashboardLoadId = 0;
-let initialised = false;
-
-async function initialise(){
-
-  if(initialised){
-    return;
-  }
-
-  initialised = true;
-
-  const {
-    data
-  } =
-    await supabaseClient.auth.getSession();
-
-  if(data.session){
-
-    await showLoggedInUI();
-
-  }else{
-
-    showLogin();
-
-  }
-
-}
-
-
-supabaseClient.auth.onAuthStateChange(
-  async (event,session) => {
-
-    if(event === "INITIAL_SESSION"){
-      return;
-    }
-
-    if(session){
-
-      await showLoggedInUI();
-
-    }else{
-
-      document
-        .getElementById("logoutButton")
-        .classList.add("hidden");
-
-      document
-        .getElementById("headerAccountEmail")
-        .textContent = "";
-
-      showLogin();
-
-    }
-
-  }
+const {error:resetError}=await supabaseClient.auth.resetPasswordForEmail(
+email,
+{redirectTo:"https://price-drop.pages.dev/"}
 );
 
+if(resetError){
+error.textContent=resetError.message;
+error.classList.remove("hidden");
+return;
+}
 
+success.textContent="If an account exists for that email address, a password reset email has been sent.";
+success.classList.remove("hidden");
+}
 
+async function loadDashboard(){
+const loadId=++dashboardLoadId;
+
+hideAllScreens();
+
+const dashboard=document.getElementById("dashboardScreen");
+const list=document.getElementById("trackedProductsList");
+const message=document.getElementById("dashboardMessage");
+
+message.innerHTML="";
+list.innerHTML="";
+
+const {data:userData,error:userError}=await supabaseClient.auth.getUser();
+
+if(userError||!userData.user){
+showLogin();
+return;
+}
+
+dashboard.classList.remove("hidden");
+
+const {data:products,error}=await supabaseClient
+.from("tracked_products")
+.select("*")
+.order("created_at",{ascending:false});
+
+if(loadId!==dashboardLoadId) return;
+
+if(error){
+console.error(error);
+message.innerHTML='<div class="error">Unable to load your tracked products. Please try again.</div>';
+return;
+}
+
+if(!products||products.length===0){
+list.innerHTML=`
+<div class="card empty-state">
+<h2>You're not tracking anything yet.</h2>
+<p>Add a product and we'll save it here for you.</p>
+<button class="primary" onclick="showHome()">Track Your First Product</button>
+</div>
+`;
+return;
+}
+
+products.forEach(product=>{
+list.appendChild(createTrackedProductCard(product));
+});
+}
+
+function createTrackedProductCard(product){
+const card=document.createElement("div");
+card.className="tracked-card";
+
+const top=document.createElement("div");
+top.className="tracked-top";
+
+const titleArea=document.createElement("div");
+
+const name=document.createElement("div");
+name.className="tracked-name";
+name.textContent=product.product_name||"Unknown product";
+
+const retailer=document.createElement("div");
+retailer.className="tracked-retailer";
+retailer.textContent=product.retailer||"Unknown retailer";
+
+titleArea.appendChild(name);
+titleArea.appendChild(retailer);
+
+const status=document.createElement("span");
+status.className="status";
+status.textContent=product.status==="active"?"Tracking":product.status||"Unknown";
+
+top.appendChild(titleArea);
+top.appendChild(status);
+card.appendChild(top);
+
+const prices=document.createElement("div");
+prices.className="tracked-prices";
+
+const currentBox=document.createElement("div");
+currentBox.className="price-box";
+
+const currentLabel=document.createElement("div");
+currentLabel.className="price-label";
+currentLabel.textContent="Current price";
+
+const currentValue=document.createElement("div");
+currentValue.className="price-value";
+currentValue.textContent=formatPrice(product.current_price,product.currency);
+
+currentBox.appendChild(currentLabel);
+currentBox.appendChild(currentValue);
+
+const targetBox=document.createElement("div");
+targetBox.className="price-box";
+
+const targetLabel=document.createElement("div");
+targetLabel.className="price-label";
+targetLabel.textContent="Target price";
+
+const targetValue=document.createElement("div");
+targetValue.className="price-value";
+targetValue.textContent=formatPrice(product.target_price,product.currency);
+
+targetBox.appendChild(targetLabel);
+targetBox.appendChild(targetValue);
+
+prices.appendChild(currentBox);
+prices.appendChild(targetBox);
+card.appendChild(prices);
+
+const historyId=`history-${product.id}`;
+
+const history=document.createElement("div");
+history.id=historyId;
+history.className="price-history hidden";
+
+card.appendChild(history);
+
+const historyButton=document.createElement("button");
+historyButton.className="secondary history-toggle";
+historyButton.textContent="View Price History";
+
+historyButton.onclick=async function(){
+if(history.classList.contains("hidden")){
+historyButton.textContent="Hide Price History";
+await togglePriceHistory(product,historyId);
+}else{
+history.classList.add("hidden");
+historyButton.textContent="View Price History";
+}
+};
+
+card.appendChild(historyButton);
+
+const actions=document.createElement("div");
+actions.className="tracked-actions";
+
+const view=document.createElement("a");
+view.className="view";
+view.textContent="View Product";
+view.href=product.product_url;
+view.target="_blank";
+view.rel="noopener noreferrer";
+
+const deleteButton=document.createElement("button");
+deleteButton.className="danger";
+deleteButton.textContent="Delete Tracking";
+deleteButton.onclick=function(){
+requestDelete(product.id);
+};
+
+actions.appendChild(view);
+actions.appendChild(deleteButton);
+card.appendChild(actions);
+
+return card;
+}
+
+async function togglePriceHistory(product,containerId){
+const container=document.getElementById(containerId);
+
+if(!container) return;
+
+container.classList.remove("hidden");
+
+container.innerHTML=`
+<div class="history-loading">
+Loading price history...
+</div>
+`;
+
+const {data,error}=await supabaseClient
+.from("price_history")
+.select("price,recorded_at,currency")
+.eq("tracked_product_id",product.id)
+.order("recorded_at",{ascending:true});
+
+if(error){
+console.error(error);
+container.innerHTML=`
+<div class="history-error">
+Unable to load price history.
+</div>
+`;
+return;
+}
+
+if(!data||data.length===0){
+container.innerHTML=`
+<div class="history-loading">
+No price history has been recorded yet.
+</div>
+`;
+return;
+}
+
+const validRows=data.filter(row=>Number.isFinite(Number(row.price)));
+
+if(validRows.length===0){
+container.innerHTML=`
+<div class="history-loading">
+No valid price history has been recorded yet.
+</div>
+`;
+return;
+}
+
+const prices=validRows.map(row=>Number(row.price));
+const lowestPrice=Math.min(...prices);
+const latestPrice=prices[prices.length-1];
+const currency=product.currency||validRows[validRows.length-1].currency||"GBP";
+
+const summary=document.createElement("div");
+summary.className="history-summary";
+
+const currentStat=document.createElement("div");
+currentStat.className="history-stat";
+currentStat.innerHTML=`
+<div class="history-stat-label">Latest recorded price</div>
+<div class="history-stat-value">${formatPrice(latestPrice,currency)}</div>
+`;
+
+const lowestStat=document.createElement("div");
+lowestStat.className="history-stat";
+lowestStat.innerHTML=`
+<div class="history-stat-label">Lowest recorded</div>
+<div class="history-stat-value">${formatPrice(lowestPrice,currency)}</div>
+`;
+
+summary.appendChild(currentStat);
+summary.appendChild(lowestStat);
+
+const chart=createPriceHistoryChart(validRows,currency);
+
+const historyList=document.createElement("div");
+historyList.className="history-list";
+
+[...validRows].reverse().forEach(row=>{
+const rowElement=document.createElement("div");
+rowElement.className="history-row";
+
+const date=document.createElement("div");
+date.className="history-date";
+date.textContent=new Date(row.recorded_at).toLocaleString(
+"en-GB",
+{
+day:"numeric",
+month:"short",
+year:"numeric",
+hour:"2-digit",
+minute:"2-digit"
+}
+);
+
+const price=document.createElement("div");
+price.className="history-price";
+price.textContent=formatPrice(row.price,currency);
+
+rowElement.appendChild(date);
+rowElement.appendChild(price);
+historyList.appendChild(rowElement);
+});
+
+container.innerHTML="";
+container.appendChild(summary);
+container.appendChild(chart);
+container.appendChild(historyList);
+}
+
+function createPriceHistoryChart(data,currency){
+const wrapper=document.createElement("div");
+wrapper.className="history-chart";
+
+const width=700;
+const height=190;
+const padding=25;
+
+const prices=data
+.map(row=>Number(row.price))
+.filter(price=>Number.isFinite(price));
+
+const minPrice=Math.min(...prices);
+const maxPrice=Math.max(...prices);
+const range=maxPrice===minPrice?1:maxPrice-minPrice;
+
+const points=data.map((row,index)=>{
+const price=Number(row.price);
+
+const x=data.length===1
+?width/2
+:padding+(index/(data.length-1))*(width-padding*2);
+
+const y=height-padding-((price-minPrice)/range)*(height-padding*2);
+
+return{x,y,price};
+});
+
+const path=points
+.map((point,index)=>`${index===0?"M":"L"} ${point.x} ${point.y}`)
+.join(" ");
+
+const circles=points
+.map(point=>`
+<circle
+class="history-point"
+cx="${point.x}"
+cy="${point.y}"
+r="5"
+></circle>
+`)
+.join("");
+
+wrapper.innerHTML=`
+<svg
+viewBox="0 0 ${width} ${height}"
+preserveAspectRatio="none"
+aria-label="Price history chart"
+>
+<path class="history-line" d="${path}"></path>
+${circles}
+</svg>
+`;
+
+return wrapper;
+}
+
+function requestDelete(productId){
+productPendingDelete=productId;
+document.getElementById("deleteConfirmation").classList.remove("hidden");
+}
+
+function cancelDelete(){
+productPendingDelete=null;
+document.getElementById("deleteConfirmation").classList.add("hidden");
+}
+
+async function confirmDelete(){
+if(!productPendingDelete) return;
+
+const id=productPendingDelete;
+
+const {error}=await supabaseClient
+.from("tracked_products")
+.delete()
+.eq("id",id);
+
+if(error){
+console.error(error);
+document.getElementById("dashboardMessage").innerHTML=
+'<div class="error">Unable to delete this product. Please try again.</div>';
+cancelDelete();
+return;
+}
+
+cancelDelete();
+await loadDashboard();
+}
+
+async function inspectProduct(){
+const name=document.getElementById("productName").value.trim();
+const url=document.getElementById("productUrl").value.trim();
+const error=document.getElementById("homeError");
+
+error.classList.add("hidden");
+
+if(!name){
+return showHomeError("Please enter the product you are looking for.");
+}
+
+if(!url||!isValidUrl(url)){
+return showHomeError("Please enter a valid product URL.");
+}
+
+hideAllScreens();
+document.getElementById("loadingScreen").classList.remove("hidden");
+
+try{
+const response=await fetch(
+API_BASE+"/api/product/inspect",
+{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({
+productName:name,
+url:url
+})
+}
+);
+
+const product=await response.json();
+
+if(!response.ok){
+throw new Error(product.error||"Unable to inspect product.");
+}
+
+if(typeof product.price!=="number"){
+throw new Error("The product page did not return a valid price.");
+}
+
+inspectedProduct=product;
+displayProduct(product);
+
+}catch(err){
+hideAllScreens();
+document.getElementById("homeScreen").classList.remove("hidden");
+showHomeError(err.message||"We couldn't retrieve the live product details.");
+}
+}
+
+function displayProduct(product){
+hideAllScreens();
+document.getElementById("productScreen").classList.remove("hidden");
+
+document.getElementById("foundProductName").textContent=
+product.productName||"Unknown product";
+
+document.getElementById("foundRetailer").textContent=
+product.retailer||"Unknown retailer";
+
+document.getElementById("foundPrice").textContent=
+formatPrice(product.price,product.currency);
+
+const image=document.getElementById("productImage");
+
+if(product.image){
+image.src=product.image;
+image.classList.remove("hidden");
+}else{
+image.classList.add("hidden");
+}
+
+const suggestedTarget=product.price*0.85;
+
+document.getElementById("targetPrice").value=
+suggestedTarget.toFixed(2);
+}
+
+async function startTracking(){
+const target=parseFloat(document.getElementById("targetPrice").value);
+const error=document.getElementById("productError");
+const button=document.getElementById("startTrackingButton");
+
+error.classList.add("hidden");
+
+if(!inspectedProduct){
+error.textContent="Product information is missing.";
+error.classList.remove("hidden");
+return;
+}
+
+if(!target||target<=0){
+error.textContent="Please enter a valid target price.";
+error.classList.remove("hidden");
+return;
+}
+
+if(target>=inspectedProduct.price){
+error.textContent="Your target price should be below the current price.";
+error.classList.remove("hidden");
+return;
+}
+
+const {data:userData,error:userError}=await supabaseClient.auth.getUser();
+
+if(userError||!userData.user){
+error.textContent="Your session has expired. Please log in again.";
+error.classList.remove("hidden");
+return;
+}
+
+button.disabled=true;
+button.textContent="Saving...";
+
+const {data:insertedProduct,error:saveError}=await supabaseClient
+.from("tracked_products")
+.insert({
+user_id:userData.user.id,
+product_name:inspectedProduct.productName,
+product_url:inspectedProduct.url,
+retailer:inspectedProduct.retailer||null,
+current_price:inspectedProduct.price,
+target_price:target,
+currency:inspectedProduct.currency||"GBP",
+status:"active"
+})
+.select()
+.single();
+
+button.disabled=false;
+button.textContent="Start Tracking";
+
+if(saveError){
+console.error(saveError);
+error.textContent="Unable to save this product. Please try again.";
+error.classList.remove("hidden");
+return;
+}
+
+/*
+Record the first price immediately so the history chart
+starts with the price at the moment tracking begins.
+*/
+if(insertedProduct){
+const {error:historyError}=await supabaseClient
+.from("price_history")
+.insert({
+tracked_product_id:insertedProduct.id,
+price:inspectedProduct.price,
+currency:inspectedProduct.currency||"GBP",
+recorded_at:new Date().toISOString()
+});
+
+if(historyError){
+console.error("Initial price history error:",historyError);
+}
+}
+
+document.getElementById("trackingSummary").innerHTML="";
+
+const summary=document.getElementById("trackingSummary");
+
+const name=document.createElement("p");
+const nameStrong=document.createElement("strong");
+nameStrong.textContent=inspectedProduct.productName;
+name.appendChild(nameStrong);
+
+const retailer=document.createElement("p");
+retailer.textContent=inspectedProduct.retailer||"";
+
+const current=document.createElement("p");
+current.textContent="Current price: ";
+
+const currentStrong=document.createElement("strong");
+currentStrong.textContent=
+formatPrice(inspectedProduct.price,inspectedProduct.currency);
+
+current.appendChild(currentStrong);
+
+const targetElement=document.createElement("p");
+targetElement.textContent="Target price: ";
+
+const targetStrong=document.createElement("strong");
+targetStrong.textContent=
+formatPrice(target,inspectedProduct.currency);
+
+targetElement.appendChild(targetStrong);
+
+summary.appendChild(name);
+summary.appendChild(retailer);
+summary.appendChild(current);
+summary.appendChild(targetElement);
+
+await showDashboard();
+}
+
+function formatPrice(price,currency="GBP"){
+try{
+return new Intl.NumberFormat(
+"en-GB",
+{
+style:"currency",
+currency:currency||"GBP"
+}
+).format(price);
+}catch{
+return "£"+Number(price).toFixed(2);
+}
+}
+
+function isValidUrl(value){
+try{
+const url=new URL(value);
+return url.protocol==="http:"||url.protocol==="https:";
+}catch{
+return false;
+}
+}
+
+function showHomeError(message){
+const error=document.getElementById("homeError");
+error.textContent=message;
+error.classList.remove("hidden");
+}
+
+async function initialise(){
+if(initialised) return;
+
+initialised=true;
+
+const {data}=await supabaseClient.auth.getSession();
+
+if(data.session){
+await showLoggedInUI();
+}else{
+showLogin();
+}
+}
+
+supabaseClient.auth.onAuthStateChange(
+async(event,session)=>{
+if(event==="INITIAL_SESSION") return;
+
+if(session){
+await showLoggedInUI();
+}else{
+document.getElementById("logoutButton").classList.add("hidden");
+document.getElementById("headerAccountEmail").textContent="";
+showLogin();
+}
+}
+);
+
+initialise();
 </script>
 
 </body>
